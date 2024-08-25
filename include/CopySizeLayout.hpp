@@ -9,10 +9,13 @@ namespace ui {
             cocos2d::CCNode* m_child;
 
             static CopySizeLayout* create(cocos2d::CCNode* child) {
-                auto ret = new CopySizeLayout();
-                ret->m_child = child;
-                ret->autorelease();
-                return ret;
+                auto ret = new (std::nothrow) CopySizeLayout();
+                if (ret) {
+                    ret->m_child = child;
+                    ret->autorelease();
+                    return ret;
+                }
+                return nullptr;
             }
             virtual ~CopySizeLayout() = default;
 

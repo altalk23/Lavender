@@ -69,12 +69,15 @@ namespace ui {
                 CrossAxisAlignment crossAxis,
                 VerticalDirection direction
             ) {
-                auto ret = new ColumnLayout();
-                ret->m_mainAxis = mainAxis;
-                ret->m_crossAxis = crossAxis;
-                ret->m_direction = direction;
-                ret->autorelease();
-                return ret;
+                auto ret = new (std::nothrow) ColumnLayout();
+                if (ret) {
+                    ret->m_mainAxis = mainAxis;
+                    ret->m_crossAxis = crossAxis;
+                    ret->m_direction = direction;
+                    ret->autorelease();
+                    return ret;
+                }
+                return nullptr;
             }
             virtual ~ColumnLayout() = default;
 
@@ -214,12 +217,15 @@ namespace ui {
                 CrossAxisAlignment crossAxis,
                 HorizontalDirection direction
             ) {
-                auto ret = new RowLayout();
-                ret->m_mainAxis = mainAxis;
-                ret->m_crossAxis = crossAxis;
-                ret->m_direction = direction == HorizontalDirection::LeftToRight ? VerticalDirection::BottomToTop : VerticalDirection::TopToBottom;
-                ret->autorelease();
-                return ret;
+                auto ret = new (std::nothrow) RowLayout();
+                if (ret) {
+                    ret->m_mainAxis = mainAxis;
+                    ret->m_crossAxis = crossAxis;
+                    ret->m_direction = direction == HorizontalDirection::LeftToRight ? VerticalDirection::BottomToTop : VerticalDirection::TopToBottom;
+                    ret->autorelease();
+                    return ret;
+                }
+                return nullptr;
             }
             virtual ~RowLayout() = default;
 

@@ -37,11 +37,14 @@ namespace ui {
             EdgeInsets m_padding;
 
             static ContainerLayout* create(cocos2d::CCNode* child, EdgeInsets padding) {
-                auto ret = new ContainerLayout();
-                ret->m_child = child;
-                ret->m_padding = padding;
-                ret->autorelease();
-                return ret;
+                auto ret = new (std::nothrow) ContainerLayout();
+                if (ret) {
+                    ret->m_child = child;
+                    ret->m_padding = padding;
+                    ret->autorelease();
+                    return ret;
+                }
+                return nullptr;
             }
             virtual ~ContainerLayout() = default;
 

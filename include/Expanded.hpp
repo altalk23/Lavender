@@ -12,7 +12,7 @@ namespace ui {
             size_t m_flex;
 
             static Expanded* create(size_t flex) {
-                auto ret = new Expanded();
+                auto ret = new (std::nothrow) Expanded();
                 if (ret && ret->init(flex)) {
                     ret->autorelease();
                     return ret;

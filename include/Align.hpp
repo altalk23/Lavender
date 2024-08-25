@@ -38,11 +38,14 @@ namespace ui {
             Alignment m_alignment;
 
             static AlignmentLayout* create(cocos2d::CCNode* child, Alignment alignment) {
-                auto ret = new AlignmentLayout();
-                ret->m_child = child;
-                ret->m_alignment = alignment;
-                ret->autorelease();
-                return ret;
+                auto ret = new (std::nothrow) AlignmentLayout();
+                if (ret) {
+                    ret->m_child = child;
+                    ret->m_alignment = alignment;
+                    ret->autorelease();
+                    return ret;
+                }
+                return nullptr;
             }
             virtual ~AlignmentLayout() = default;
 

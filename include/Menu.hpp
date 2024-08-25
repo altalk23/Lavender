@@ -10,13 +10,13 @@ namespace ui {
         class MenuWrapper : public cocos2d::CCMenu {
         public:
             static MenuWrapper* create() {
-                auto ret = new MenuWrapper();
+                auto ret = new (std::nothrow) MenuWrapper();
                 if (ret && ret->init()) {
                     ret->autorelease();
                     return ret;
                 }
                 delete ret;
-                return ret;
+                return nullptr;
             }
             virtual ~MenuWrapper() = default;
 

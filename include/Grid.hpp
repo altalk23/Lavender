@@ -27,13 +27,15 @@ namespace ui {
                 float crossAxisSpacing,
                 size_t crossAxisCount
             ) {
-                auto ret = new ColumnGridLayout();
-                ret->m_direction = direction;
-                ret->m_crossDirection = crossDirection;
-                ret->m_mainAxisSpacing = mainAxisSpacing;
-                ret->m_crossAxisSpacing = crossAxisSpacing;
-                ret->m_crossAxisCount = crossAxisCount;
-                ret->autorelease();
+                auto ret = new (std::nothrow) ColumnGridLayout();
+                if (ret) {
+                    ret->m_direction = direction;
+                    ret->m_crossDirection = crossDirection;
+                    ret->m_mainAxisSpacing = mainAxisSpacing;
+                    ret->m_crossAxisSpacing = crossAxisSpacing;
+                    ret->m_crossAxisCount = crossAxisCount;
+                    ret->autorelease();
+                }
                 return ret;
             }
             virtual ~ColumnGridLayout() = default;
@@ -121,13 +123,15 @@ namespace ui {
                 float crossAxisSpacing,
                 size_t crossAxisCount
             ) {
-                auto ret = new RowGridLayout();
-                ret->m_direction = direction == HorizontalDirection::LeftToRight ? VerticalDirection::BottomToTop : VerticalDirection::TopToBottom;
-                ret->m_crossDirection = crossDirection == VerticalDirection::TopToBottom ? HorizontalDirection::RightToLeft : HorizontalDirection::LeftToRight;
-                ret->m_mainAxisSpacing = mainAxisSpacing;
-                ret->m_crossAxisSpacing = crossAxisSpacing;
-                ret->m_crossAxisCount = crossAxisCount;
-                ret->autorelease();
+                auto ret = new (std::nothrow) RowGridLayout();
+                if (ret) {
+                    ret->m_direction = direction == HorizontalDirection::LeftToRight ? VerticalDirection::BottomToTop : VerticalDirection::TopToBottom;
+                    ret->m_crossDirection = crossDirection == VerticalDirection::TopToBottom ? HorizontalDirection::RightToLeft : HorizontalDirection::LeftToRight;
+                    ret->m_mainAxisSpacing = mainAxisSpacing;
+                    ret->m_crossAxisSpacing = crossAxisSpacing;
+                    ret->m_crossAxisCount = crossAxisCount;
+                    ret->autorelease();
+                }
                 return ret;
             }
 
