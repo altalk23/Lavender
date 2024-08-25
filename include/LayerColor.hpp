@@ -40,9 +40,9 @@ namespace ui {
     }
 
     struct LayerColor : public BaseInitializer<LayerColor> {
-        UICONSTRUCTOR_ADD_ID();
-        UICONSTRUCTOR_ADD_CHILD();
-        UICONSTRUCTOR_ADD_SIZE();
+        LAVENDER_ADD_ID();
+        LAVENDER_ADD_CHILD();
+        LAVENDER_ADD_SIZE();
     
         cocos2d::ccColor4B color;
 

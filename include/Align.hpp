@@ -75,8 +75,8 @@ namespace ui {
     }
 
     struct Align : public BaseInitializer<Align> {
-        UICONSTRUCTOR_ADD_ID();
-        UICONSTRUCTOR_ADD_CHILD();
+        LAVENDER_ADD_ID();
+        LAVENDER_ADD_CHILD();
 
         Alignment alignment = Alignment::Center;
 

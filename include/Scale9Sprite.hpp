@@ -7,11 +7,11 @@
 
 namespace ui {
     struct Scale9Sprite : BaseInitializer<Scale9Sprite> {
-        UICONSTRUCTOR_ADD_ID();
-        UICONSTRUCTOR_ADD_CHILD();
-        UICONSTRUCTOR_ADD_SCALE();
-        UICONSTRUCTOR_ADD_SIZE();
-        UICONSTRUCTOR_ADD_COLOR();
+        LAVENDER_ADD_ID();
+        LAVENDER_ADD_CHILD();
+        LAVENDER_ADD_SCALE();
+        LAVENDER_ADD_SIZE();
+        LAVENDER_ADD_COLOR();
 
         std::optional<std::string> fileName;
         std::optional<std::string> frameName;

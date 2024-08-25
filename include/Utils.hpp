@@ -4,7 +4,7 @@
 #include "CopySizeLayout.hpp"
 
 namespace ui::utils {
-    #define UICONSTRUCTOR_ADD_ID() \
+    #define LAVENDER_ADD_ID() \
         std::optional<std::string> id
     
     void applyID(auto const* data, cocos2d::CCNode* node) {
@@ -13,7 +13,7 @@ namespace ui::utils {
         }
     }
 
-    #define UICONSTRUCTOR_ADD_CHILDREN() \
+    #define LAVENDER_ADD_CHILDREN() \
         std::vector<Base*> children
 
     bool applyChildren(auto const* data, cocos2d::CCNode* node) {
@@ -24,7 +24,7 @@ namespace ui::utils {
         return data->children.size() > 0;
     }
 
-    #define UICONSTRUCTOR_ADD_CHILDREN_BUILDER() \
+    #define LAVENDER_ADD_CHILDREN_BUILDER() \
         std::function<Base*(size_t)> builder; \
         size_t count = 0
 
@@ -40,7 +40,7 @@ namespace ui::utils {
         return false;
     }
 
-    #define UICONSTRUCTOR_ADD_CHILD() \
+    #define LAVENDER_ADD_CHILD() \
         Base* child
 
     cocos2d::CCNode* applyChild(auto const* data, cocos2d::CCNode* node) {
@@ -52,7 +52,7 @@ namespace ui::utils {
         return nullptr;
     }
 
-    #define UICONSTRUCTOR_ADD_SIZE() \
+    #define LAVENDER_ADD_SIZE() \
         std::optional<cocos2d::CCSize> size; \
         std::optional<float> width; \
         std::optional<float> height
@@ -75,7 +75,7 @@ namespace ui::utils {
         );
     }
 
-    #define UICONSTRUCTOR_ADD_SCALE() \
+    #define LAVENDER_ADD_SCALE() \
         std::optional<float> scaleX; \
         std::optional<float> scaleY; \
         std::optional<float> scale
@@ -92,7 +92,7 @@ namespace ui::utils {
         }
     }
 
-    #define UICONSTRUCTOR_ADD_ROTATION() \
+    #define LAVENDER_ADD_ROTATION() \
         std::optional<float> rotation
 
     void applyRotation(auto const* data, cocos2d::CCNode* node) {
@@ -113,7 +113,7 @@ namespace ui::utils {
         return wrapper;
     }
 
-    #define UICONSTRUCTOR_ADD_COLOR() \
+    #define LAVENDER_ADD_COLOR() \
         std::optional<cocos2d::ccColor3B> color
 
     void applyColor(auto const* data, cocos2d::CCNodeRGBA* node) {

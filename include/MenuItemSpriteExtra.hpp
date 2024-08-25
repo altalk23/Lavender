@@ -7,8 +7,8 @@
 
 namespace ui {
     struct MenuItemSpriteExtra : public BaseInitializer<MenuItemSpriteExtra> {
-        UICONSTRUCTOR_ADD_ID();
-        UICONSTRUCTOR_ADD_CHILD();
+        LAVENDER_ADD_ID();
+        LAVENDER_ADD_CHILD();
 
         std::function<void(cocos2d::CCObject*)> callback;
 

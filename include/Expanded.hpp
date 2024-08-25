@@ -33,8 +33,8 @@ namespace ui {
     }
 
     struct Expanded : BaseInitializer<Expanded> {
-        UICONSTRUCTOR_ADD_ID();
-        UICONSTRUCTOR_ADD_CHILD();
+        LAVENDER_ADD_ID();
+        LAVENDER_ADD_CHILD();
 
         size_t flex = 1;
 

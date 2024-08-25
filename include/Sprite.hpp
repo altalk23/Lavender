@@ -7,10 +7,10 @@
 
 namespace ui {
     struct Sprite : public BaseInitializer<Sprite> {
-        UICONSTRUCTOR_ADD_ID();
-        UICONSTRUCTOR_ADD_CHILD();
-        UICONSTRUCTOR_ADD_SCALE();
-        UICONSTRUCTOR_ADD_ROTATION();
+        LAVENDER_ADD_ID();
+        LAVENDER_ADD_CHILD();
+        LAVENDER_ADD_SCALE();
+        LAVENDER_ADD_ROTATION();
 
         std::optional<std::string> fileName;
         std::optional<std::string> frameName;

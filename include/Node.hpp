@@ -7,7 +7,7 @@
 
 namespace ui {
     struct Node : public BaseInitializer<Node> {
-        UICONSTRUCTOR_ADD_ID();
+        LAVENDER_ADD_ID();
 
         std::optional<float> scale;
         std::optional<float> rotation;

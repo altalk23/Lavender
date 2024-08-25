@@ -160,9 +160,9 @@ namespace ui {
     }
 
     struct Grid : public BaseInitializer<Grid> {
-        UICONSTRUCTOR_ADD_ID();
-        UICONSTRUCTOR_ADD_CHILDREN();
-        UICONSTRUCTOR_ADD_CHILDREN_BUILDER();
+        LAVENDER_ADD_ID();
+        LAVENDER_ADD_CHILDREN();
+        LAVENDER_ADD_CHILDREN_BUILDER();
         
         float mainAxisSpacing = 0.f;
         float crossAxisSpacing = 0.f;

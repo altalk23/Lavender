@@ -68,9 +68,9 @@ namespace ui {
     }
 
     struct Container : BaseInitializer<Container> {
-        UICONSTRUCTOR_ADD_ID();
-        UICONSTRUCTOR_ADD_CHILD();
-        UICONSTRUCTOR_ADD_SIZE();
+        LAVENDER_ADD_ID();
+        LAVENDER_ADD_CHILD();
+        LAVENDER_ADD_SIZE();
 
         EdgeInsets padding;
 

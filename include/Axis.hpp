@@ -250,9 +250,9 @@ namespace ui {
     }
 
     struct Column : public BaseInitializer<Column> {
-        UICONSTRUCTOR_ADD_ID();
-        UICONSTRUCTOR_ADD_CHILDREN();
-        UICONSTRUCTOR_ADD_CHILDREN_BUILDER();
+        LAVENDER_ADD_ID();
+        LAVENDER_ADD_CHILDREN();
+        LAVENDER_ADD_CHILDREN_BUILDER();
 
         MainAxisAlignment mainAxis = MainAxisAlignment::Start;
         CrossAxisAlignment crossAxis = CrossAxisAlignment::Start;
@@ -277,9 +277,9 @@ namespace ui {
     };
 
     struct Row : public BaseInitializer<Row> {
-        UICONSTRUCTOR_ADD_ID();
-        UICONSTRUCTOR_ADD_CHILDREN();
-        UICONSTRUCTOR_ADD_CHILDREN_BUILDER();
+        LAVENDER_ADD_ID();
+        LAVENDER_ADD_CHILDREN();
+        LAVENDER_ADD_CHILDREN_BUILDER();
 
         MainAxisAlignment mainAxis = MainAxisAlignment::Start;
         CrossAxisAlignment crossAxis = CrossAxisAlignment::Start;

@@ -82,8 +82,8 @@ namespace ui {
     }
 
     struct Menu : public BaseInitializer<Menu> {
-        UICONSTRUCTOR_ADD_ID();
-        UICONSTRUCTOR_ADD_CHILD();
+        LAVENDER_ADD_ID();
+        LAVENDER_ADD_CHILD();
     
         cocos2d::CCNode* construct() {
             auto node = impl::MenuWrapper::create();
