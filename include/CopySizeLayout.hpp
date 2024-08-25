@@ -18,13 +18,13 @@ namespace ui {
 
             void apply(cocos2d::CCNode* in) override {
                 m_child->ignoreAnchorPointForPosition(false);
-                m_child->setContentSize(in->getContentSize() / in->getScale());
+                m_child->setContentSize(in->getContentSize());
                 m_child->setPosition(in->getContentSize() / 2.f);
                 m_child->setAnchorPoint(ccp(0.5f, 0.5f));
                 m_child->updateLayout();
             }
             cocos2d::CCSize getSizeHint(cocos2d::CCNode* in) const override {
-                return in->getScaledContentSize();
+                return in->getContentSize();
             }
         };
     }

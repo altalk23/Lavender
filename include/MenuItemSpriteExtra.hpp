@@ -9,7 +9,6 @@ namespace ui {
     struct MenuItemSpriteExtra : public BaseInitializer<MenuItemSpriteExtra> {
         UICONSTRUCTOR_ADD_ID();
         UICONSTRUCTOR_ADD_CHILD();
-        UICONSTRUCTOR_ADD_COPY_SIZE();
 
         std::function<void(cocos2d::CCObject*)> callback;
 
@@ -24,8 +23,6 @@ namespace ui {
 
             utils::applyID(this, node);
             utils::applyCopySize(this, node, normal);
-
-            utils::updateCopySize(this, node);
 
             delete this;
             return node;

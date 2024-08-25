@@ -35,7 +35,6 @@ namespace ui {
     struct Expanded : BaseInitializer<Expanded> {
         UICONSTRUCTOR_ADD_ID();
         UICONSTRUCTOR_ADD_CHILD();
-        UICONSTRUCTOR_ADD_COPY_SIZE();
 
         size_t flex = 1;
 
@@ -52,8 +51,6 @@ namespace ui {
             }
 
             utils::applyID(this, node);
-
-            utils::updateCopySize(this, node);
 
             delete this;
             return node;

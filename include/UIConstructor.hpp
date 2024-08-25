@@ -10,4 +10,6 @@
 #include "MenuItemSpriteExtra.hpp"
 #include "Node.hpp"
 #include "Sprite.hpp"
+#include "Scale9Sprite.hpp"
 #include "Scene.hpp"
+#include "Align.hpp"

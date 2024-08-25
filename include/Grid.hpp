@@ -203,8 +203,6 @@ namespace ui {
                     break;
             }
 
-            node->updateLayout();
-
             delete this;
             return node;
         }

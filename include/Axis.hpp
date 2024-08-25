@@ -90,8 +90,8 @@ namespace ui {
                     }
                     else {
                         totalHeight += this->getNodeHeight(child);
-                        totalWidth = std::max(totalWidth, this->getNodeWidth(child));
                     }
+                    totalWidth = std::max(totalWidth, this->getNodeWidth(child));
                 }
 
                 float gap = this->getNodeHeight(in) - totalHeight;
@@ -271,8 +271,6 @@ namespace ui {
                 impl::ColumnLayout::create(mainAxis, crossAxis, direction)
             );
 
-            node->updateLayout();
-
             delete this;
             return node;
         }
@@ -299,8 +297,6 @@ namespace ui {
             node->setLayout(
                 impl::RowLayout::create(mainAxis, crossAxis, direction)
             );
-
-            node->updateLayout();
 
             delete this;
             return node;

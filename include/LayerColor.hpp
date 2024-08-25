@@ -43,7 +43,6 @@ namespace ui {
         UICONSTRUCTOR_ADD_ID();
         UICONSTRUCTOR_ADD_CHILD();
         UICONSTRUCTOR_ADD_SIZE();
-        UICONSTRUCTOR_ADD_COPY_SIZE();
     
         cocos2d::ccColor4B color;
 
@@ -62,8 +61,6 @@ namespace ui {
             if (this->keyBackClicked) {
                 node->keyBackClickedFunction = this->keyBackClicked;
             }
-
-            utils::updateCopySize(this, node);
 
             delete this;
             return node;

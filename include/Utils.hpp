@@ -69,21 +69,10 @@ namespace ui::utils {
         }
     }
 
-    #define UICONSTRUCTOR_ADD_COPY_SIZE() \
-        bool copySize = true
-
     void applyCopySize(auto const* data, cocos2d::CCNode* node, cocos2d::CCNode* child) {
-        if (data->copySize) {
-            node->setLayout(
-                impl::CopySizeLayout::create(child)
-            );
-        }
-    }
-
-    void updateCopySize(auto const* data, cocos2d::CCNode* node) {
-        if (data->copySize) {
-            node->updateLayout();
-        }
+        node->setLayout(
+            impl::CopySizeLayout::create(child)
+        );
     }
 
     #define UICONSTRUCTOR_ADD_SCALE() \
@@ -122,5 +111,14 @@ namespace ui::utils {
             wrapper->getContentSize().height / 2
         });
         return wrapper;
+    }
+
+    #define UICONSTRUCTOR_ADD_COLOR() \
+        std::optional<cocos2d::ccColor3B> color
+
+    void applyColor(auto const* data, cocos2d::CCNodeRGBA* node) {
+        if (data->color.has_value()) {
+            node->setColor(data->color.value());
+        }
     }
 }

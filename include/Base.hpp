@@ -11,6 +11,12 @@ namespace ui {
         cocos2d::CCNode* construct() {
             return this->constructor(this);
         }
+
+        cocos2d::CCNode* get() {
+            auto ret = this->constructor(this);
+            ret->updateLayout();
+            return ret;
+        }
     };
 
     template <class Parent>

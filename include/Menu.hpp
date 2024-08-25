@@ -84,7 +84,6 @@ namespace ui {
     struct Menu : public BaseInitializer<Menu> {
         UICONSTRUCTOR_ADD_ID();
         UICONSTRUCTOR_ADD_CHILD();
-        UICONSTRUCTOR_ADD_COPY_SIZE();
     
         cocos2d::CCNode* construct() {
             auto node = impl::MenuWrapper::create();
@@ -94,8 +93,6 @@ namespace ui {
             }
 
             utils::applyID(this, node);
-
-            utils::updateCopySize(this, node);
 
             delete this;
             return node;

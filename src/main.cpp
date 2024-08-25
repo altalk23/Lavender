@@ -42,52 +42,32 @@ class $modify(MyMenuLayer, MenuLayer) {
 					.id = "my-grid"_spr,
 					.crossAxis = ui::CrossAxisAlignment::Stretch,
 					.children = {
-						new ui::LayerColor {
-							.id = "my-cell-1"_spr,
-							.color = ccc4(255, 0, 0, 255),
-							.width = 50,
+						new ui::Expanded {
+							.child = new ui::Align {
+								.id = "my-align"_spr,
+								.alignment = ui::Alignment::TopLeft,
+								.child = new ui::LayerColor {
+									.id = "my-cell-1-1"_spr,
+									.color = ccc4(255, 0, 0, 255),
+									.size = cocos2d::CCSize { 100, 100 },
+								},	
+							},
 						},
 						new ui::Container {
 							.id = "my-container"_spr,
 							.padding = ui::EdgeInsets::Symmetric { .vertical = 20, .horizontal = 10 },
-							.width = 80,
+							.width = 200,
 							.child = new ui::LayerColor {
 								.id = "my-cell-2-1"_spr,
 								.color = ccc4(255, 0, 187, 255),
 							},
 						},
-						new ui::Expanded {
-							.id = "my-cell-3"_spr,
-							.flex = 2,
-							.child = new ui::Column {
-								.id = "my-column"_spr,
-								.crossAxis = ui::CrossAxisAlignment::Stretch,
-								.direction = ui::VerticalDirection::TopToBottom,
-								.children = {
-									new ui::LayerColor {
-										.id = "my-cell-3-1"_spr,
-										.color = ccc4(0, 255, 0, 255),
-										.height = 100,
-									},
-									new ui::LayerColor {
-										.id = "my-cell-3-2"_spr,
-										.color = ccc4(255, 255, 0, 255),
-										.height = 100,
-									},
-								},
-							},
-						},
-						new ui::LayerColor {
-							.id = "my-cell-4"_spr,
-							.color = ccc4(0, 0, 255, 255),
-							.width = 50,
-						},
-					}
+					},
 				},
 			},
 		};
 
-		auto node = gen->construct();
+		auto node = gen->get();
 
 		CCDirector::sharedDirector()->replaceScene(static_cast<CCScene*>(node));
 	}

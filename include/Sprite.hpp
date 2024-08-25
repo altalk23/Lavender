@@ -9,7 +9,6 @@ namespace ui {
     struct Sprite : public BaseInitializer<Sprite> {
         UICONSTRUCTOR_ADD_ID();
         UICONSTRUCTOR_ADD_CHILD();
-        UICONSTRUCTOR_ADD_COPY_SIZE();
         UICONSTRUCTOR_ADD_SCALE();
         UICONSTRUCTOR_ADD_ROTATION();
 
@@ -39,8 +38,6 @@ namespace ui {
             if (auto child = utils::applyChild(this, wrapper)) {
                 utils::applyCopySize(this, wrapper, child);
             }
-
-            utils::updateCopySize(this, wrapper);
 
             delete this;
             return wrapper;

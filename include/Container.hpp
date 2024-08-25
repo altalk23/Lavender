@@ -86,8 +86,6 @@ namespace ui {
             utils::applyID(this, node);
             utils::applySize(this, node);
 
-            node->updateLayout();
-
             delete this;
             return node;
         }
