@@ -6,70 +6,42 @@
 #include "Utils.hpp"
 
 namespace ui {
-    struct Alignment {
-        float x = 0.f;
-        float y = 0.f;
-
-        static Alignment TopLeft;
-        static Alignment TopCenter;
-        static Alignment TopRight;
-        static Alignment CenterLeft;
-        static Alignment Center;
-        static Alignment CenterRight;
-        static Alignment BottomLeft;
-        static Alignment BottomCenter;
-        static Alignment BottomRight;
-    };
-
-    inline Alignment Alignment::TopLeft = { -1.f, 1.f };
-    inline Alignment Alignment::TopCenter = { 0.f, 1.f };
-    inline Alignment Alignment::TopRight = { 1.f, 1.f };
-    inline Alignment Alignment::CenterLeft = { -1.f, 0.f };
-    inline Alignment Alignment::Center = { 0.f, 0.f };
-    inline Alignment Alignment::CenterRight = { 1.f, 0.f };
-    inline Alignment Alignment::BottomLeft = { -1.f, -1.f };
-    inline Alignment Alignment::BottomCenter = { 0.f, -1.f };
-    inline Alignment Alignment::BottomRight = { 1.f, -1.f };
-
     namespace impl {
         class AlignmentLayout : public cocos2d::Layout {
         public:
-            cocos2d::CCNode* m_child;
             Alignment m_alignment;
 
-            static AlignmentLayout* create(cocos2d::CCNode* child, Alignment alignment) {
+            static AlignmentLayout* create(Alignment alignment) {
                 auto ret = new (std::nothrow) AlignmentLayout();
                 if (ret) {
-                    ret->m_child = child;
                     ret->m_alignment = alignment;
                     ret->autorelease();
                     return ret;
                 }
                 return nullptr;
             }
-            virtual ~AlignmentLayout() = default;
 
             void apply(cocos2d::CCNode* in) override {
-                auto const availableSize = in->getContentSize();
-                if (availableSize.width < m_child->getContentWidth()) {
-                    m_child->setContentWidth(availableSize.width);
-                }
-                if (availableSize.height < m_child->getContentHeight()) {
-                    m_child->setContentHeight(availableSize.height);
-                }
-                auto const childSize = m_child->getContentSize();
-                auto const stepSize = (availableSize - childSize) / 2.f; // single step to change alignment by 1
+                auto const [minSize, maxSize] = utils::getConstraints(in);
+                auto child = utils::getChild(in);
+                if (child) {
+                    utils::setConstraints(child, ccp(0, 0), maxSize);
+                    child->updateLayout();
 
-                auto const center = availableSize / 2.f;
-                auto const offset = cocos2d::CCSize(
-                    m_alignment.x * stepSize.width,
-                    m_alignment.y * stepSize.height
-                );
+                    auto const childSize = child->getContentSize();
+                    auto const stepSize = (maxSize - childSize) / 2.f; // single step to change alignment by 1
 
-                m_child->ignoreAnchorPointForPosition(false);
-                m_child->setPosition(center + offset);
-                m_child->setAnchorPoint(ccp(0.5f, 0.5f));
-                m_child->updateLayout();
+                    auto const center = maxSize / 2.f;
+                    auto const offset = cocos2d::CCSize(
+                        m_alignment.x * stepSize.width,
+                        m_alignment.y * stepSize.height
+                    );
+
+                    child->ignoreAnchorPointForPosition(false);
+                    child->setPosition(center + offset);
+                    child->setAnchorPoint(ccp(0.5f, 0.5f));
+                }
+                in->setContentSize(maxSize);
             }
             cocos2d::CCSize getSizeHint(cocos2d::CCNode* in) const override {
                 return in->getContentSize();
@@ -88,7 +60,27 @@ namespace ui {
 
             if (auto child = utils::applyChild(this, node)) {
                 node->setLayout(
-                    impl::AlignmentLayout::create(child, this->alignment)
+                    impl::AlignmentLayout::create(this->alignment)
+                );
+            }
+
+            utils::applyID(this, node);
+
+            delete this;
+            return node;
+        }
+    };
+
+    struct Center : public BaseInitializer<Center> {
+        LAVENDER_ADD_ID();
+        LAVENDER_ADD_CHILD();
+
+        cocos2d::CCNode* construct() {
+            auto node = cocos2d::CCNode::create();
+
+            if (auto child = utils::applyChild(this, node)) {
+                node->setLayout(
+                    impl::AlignmentLayout::create(Alignment::Center)
                 );
             }
 

@@ -1,6 +1,8 @@
 #pragma once
 
 #include "Base.hpp"
+#include "Utils.hpp"
+#include "ConstrainedLayout.hpp"
 
 namespace ui {
     namespace impl {
@@ -51,9 +53,8 @@ namespace ui {
         cocos2d::CCNode* construct() {
             auto node = impl::LayerColorWrapper::create(this->color, 0.f, 0.f);
 
-            if (auto child = utils::applyChild(this, node)) {
-                utils::applyCopySize(this, node, child);
-            }
+            (void)utils::applyChild(this, node);
+            utils::applySizedConstrainedLayout(this, node);
 
             utils::applyID(this, node);
             utils::applySize(this, node);

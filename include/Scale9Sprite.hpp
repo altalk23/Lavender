@@ -4,6 +4,7 @@
 
 #include "Base.hpp"
 #include "Utils.hpp"
+#include "ConstrainedLayout.hpp"
 
 namespace ui {
     struct Scale9Sprite : BaseInitializer<Scale9Sprite> {
@@ -30,9 +31,8 @@ namespace ui {
                 return nullptr;
             }
 
-            if (auto child = utils::applyChild(this, node)) {
-                utils::applyCopySize(this, node, child);
-            }
+            (void)utils::applyChild(this, node);
+            utils::applySizedConstrainedLayout(this, node);
 
             utils::applyID(this, node);
             utils::applyScale(this, node);

@@ -7,56 +7,6 @@
 #include "Expanded.hpp"
 
 namespace ui {
-    enum class MainAxisAlignment {
-        // Align items to the start
-        // |ooo......|
-        Start,
-        // All items are centered
-        // |...ooo...|
-        Center,
-        // Align items to the end
-        // |......ooo|
-        End,
-        // Each item gets the same portion from the layout (disregards gap)
-        // |.o..o..o.|
-        Even,
-        // Space between each item is the same (disregards gap)
-        // |o...o...o|
-        Between,
-        // Space around each item is the same (disregards gap)
-        // |.o..o..o.|
-        Around,
-    };
-
-    enum class CrossAxisAlignment {
-        // Align items to the start
-        // |ooo......|
-        Start,
-        // All items are centered
-        // |...ooo...|
-        Center,
-        // Align items to the end
-        // |......ooo|
-        End,
-        // Align items to the stretch
-        // |ooooooooo|
-        Stretch,
-    };
-
-    enum class VerticalDirection {
-        // Items are laid out from top to bottom
-        TopToBottom,
-        // Items are laid out from bottom to top
-        BottomToTop,
-    };
-
-    enum class HorizontalDirection {
-        // Items are laid out from left to right
-        LeftToRight,
-        // Items are laid out from right to left
-        RightToLeft,
-    };
-
     namespace impl {
         class ColumnLayout : public cocos2d::Layout {
         public:
@@ -79,25 +29,68 @@ namespace ui {
                 }
                 return nullptr;
             }
-            virtual ~ColumnLayout() = default;
+
+            virtual std::pair<cocos2d::CCSize, cocos2d::CCSize> getConstraints(cocos2d::CCNode* in) const {
+                return utils::getConstraints(in);
+            }
+
+            virtual void setConstraints(cocos2d::CCNode* node, cocos2d::CCSize minSize, cocos2d::CCSize maxSize) const {
+                utils::setConstraints(node, minSize, maxSize);
+            }
+
+            virtual Axis getMainAxis() const {
+                return Axis::Vertical;
+            }
 
             void apply(cocos2d::CCNode* in) override {
+                auto const [minSize, maxSize] = this->getConstraints(in);
+                
                 float totalHeight = 0.0f;
                 float totalWidth = 0.0f;
 
                 size_t flexCount = 0;
 
+                std::vector<Expanded*> expandeds;
+
                 for (auto child : geode::cocos::CCArrayExt<cocos2d::CCNode*>(in->getChildren())) {
-                    if (auto expanded = geode::cast::typeinfo_cast<Expanded*>(child)) {
+                    // dynamic cast because other uses of this header 
+                    // may have different expanded implementations
+                    // that differ in their abi
+                    if (auto expanded = dynamic_cast<Expanded*>(child)) {
                         flexCount += expanded->m_flex;
+                        expandeds.push_back(expanded);
                     }
                     else {
+                        if (m_crossAxis == CrossAxisAlignment::Stretch) {
+                            this->setConstraints(child, ccp(maxSize.width, 0), ccp(maxSize.width, FLT_MAX));
+                        }
+                        else {
+                            this->setConstraints(child, ccp(0, 0), ccp(maxSize.width, FLT_MAX));
+                        }
+                        child->updateLayout();
                         totalHeight += this->getNodeHeight(child);
+                        totalWidth = std::max(totalWidth, this->getNodeWidth(child));
                     }
-                    totalWidth = std::max(totalWidth, this->getNodeWidth(child));
                 }
 
-                float gap = this->getNodeHeight(in) - totalHeight;
+                float const remainingHeight = maxSize.height - totalHeight;
+
+                for (auto expanded : expandeds) {
+                    auto const height = remainingHeight / flexCount * expanded->m_flex;
+
+                    expanded->m_mainAxis = this->getMainAxis();
+                    this->setConstraints(expanded, ccp(0, 0), ccp(maxSize.width, height));
+                    expanded->updateLayout();
+
+                    totalWidth = std::max(totalWidth, this->getNodeWidth(expanded));
+                }
+
+                totalWidth = std::max(totalWidth, minSize.width);
+
+                this->setContentWidth(in, totalWidth);
+                this->setContentHeight(in, maxSize.height);
+
+                float gap = remainingHeight;
                 float offset = 0.0f;
                 float flexGap = 0.0f;
 
@@ -152,23 +145,16 @@ namespace ui {
                         case CrossAxisAlignment::Start:
                             this->setNodePosition(child, ccp(0, offset) + center);
                             break;
+                        case CrossAxisAlignment::Stretch: [[fallthrough]];
                         case CrossAxisAlignment::Center:
                             this->setNodePosition(child, ccp(endWidth / 2.0f, offset) + center);
                             break;
                         case CrossAxisAlignment::End:
                             this->setNodePosition(child, ccp(endWidth, offset) + center);
                             break;
-                        case CrossAxisAlignment::Stretch:
-                            this->setContentWidth(child, this->getNodeWidth(in));
-                            this->setNodePosition(child, ccp(0, offset) + center);
-                            break;
-                    }
-                    if (auto expanded = geode::cast::typeinfo_cast<Expanded*>(child)) {
-                        this->setContentHeight(child, expanded->m_flex * flexGap);
                     }
                     child->ignoreAnchorPointForPosition(false);
                     child->setAnchorPoint(ccp(0.5f, 0.5f));
-                    child->updateLayout();
 
                     switch (m_direction) {
                         case VerticalDirection::TopToBottom:
@@ -227,7 +213,22 @@ namespace ui {
                 }
                 return nullptr;
             }
-            virtual ~RowLayout() = default;
+
+            std::pair<cocos2d::CCSize, cocos2d::CCSize> getConstraints(cocos2d::CCNode* in) const override {
+                auto [minSize, maxSize] = utils::getConstraints(in);
+                return std::pair<cocos2d::CCSize, cocos2d::CCSize>(
+                    cocos2d::CCSize(minSize.height, minSize.width),
+                    cocos2d::CCSize(maxSize.height, maxSize.width)
+                );
+            }
+
+            void setConstraints(cocos2d::CCNode* node, cocos2d::CCSize minSize, cocos2d::CCSize maxSize) const override {
+                utils::setConstraints(node, ccp(minSize.height, minSize.width), ccp(maxSize.height, maxSize.width));
+            }
+
+            Axis getMainAxis() const override {
+                return Axis::Horizontal;
+            }
 
             cocos2d::CCSize getNodeSize(cocos2d::CCNode* node) const override {
                 return cocos2d::CCSize(node->getContentSize().height, node->getContentSize().width);
@@ -261,7 +262,7 @@ namespace ui {
         LAVENDER_ADD_CHILDREN_BUILDER();
 
         MainAxisAlignment mainAxis = MainAxisAlignment::Start;
-        CrossAxisAlignment crossAxis = CrossAxisAlignment::Start;
+        CrossAxisAlignment crossAxis = CrossAxisAlignment::Center;
         VerticalDirection direction = VerticalDirection::TopToBottom;
 
         cocos2d::CCNode* construct() {
@@ -288,7 +289,7 @@ namespace ui {
         LAVENDER_ADD_CHILDREN_BUILDER();
 
         MainAxisAlignment mainAxis = MainAxisAlignment::Start;
-        CrossAxisAlignment crossAxis = CrossAxisAlignment::Start;
+        CrossAxisAlignment crossAxis = CrossAxisAlignment::Center;
         HorizontalDirection direction = HorizontalDirection::LeftToRight;
 
         cocos2d::CCNode* construct() {

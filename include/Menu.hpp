@@ -4,6 +4,7 @@
 
 #include "Base.hpp"
 #include "Utils.hpp"
+#include "ConstrainedLayout.hpp"
 
 namespace ui {
     namespace impl {
@@ -88,9 +89,8 @@ namespace ui {
         cocos2d::CCNode* construct() {
             auto node = impl::MenuWrapper::create();
 
-            if (auto child = utils::applyChild(this, node)) {
-                utils::applyCopySize(this, node, child);
-            }
+            (void)utils::applyChild(this, node);
+            utils::applySingleConstrainedLayout(this, node);
 
             utils::applyID(this, node);
 

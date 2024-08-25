@@ -4,22 +4,25 @@
 
 #include "Base.hpp"
 #include "Utils.hpp"
+#include "Expanded.hpp"
 
 namespace ui {
-    struct Scene : public BaseInitializer<Scene> {
+    struct Flexible : public BaseInitializer<Flexible> {
         LAVENDER_ADD_ID();
         LAVENDER_ADD_CHILD();
 
-        cocos2d::CCNode* construct() {
-            auto node = cocos2d::CCScene::create();
+        size_t flex = 1;
 
-            node->setAnchorPoint(ccp(0, 0));
+        cocos2d::CCNode* construct() {
+            if (this->flex < 1) {
+                delete this;
+                return nullptr;
+            }
+
+            auto node = impl::Expanded::create(this->flex);
 
             (void)utils::applyChild(this, node);
             utils::applySingleConstrainedLayout(this, node);
-
-            auto winSize = cocos2d::CCDirector::sharedDirector()->getWinSize();
-            node->setUserObject("constrain"_spr, impl::ConstrainedObject::create(ccp(0, 0), winSize));
 
             utils::applyID(this, node);
 

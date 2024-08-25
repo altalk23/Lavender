@@ -35,9 +35,8 @@ namespace ui {
 
             auto wrapper = utils::generateWrapper(node);
 
-            if (auto child = utils::applyChild(this, wrapper)) {
-                utils::applyCopySize(this, wrapper, child);
-            }
+           (void)utils::applyChild(this, wrapper);
+            utils::applySingleConstrainedLayout(this, wrapper);
 
             delete this;
             return wrapper;

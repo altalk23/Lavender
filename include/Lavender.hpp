@@ -4,6 +4,7 @@
 #include "Axis.hpp"
 #include "Container.hpp"
 #include "Expanded.hpp"
+#include "Flexible.hpp"
 #include "LayerColor.hpp"
 #include "Grid.hpp"
 #include "Menu.hpp"

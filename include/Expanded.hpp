@@ -4,12 +4,14 @@
 
 #include "Base.hpp"
 #include "Utils.hpp"
+#include "ConstrainedLayout.hpp"
 
 namespace ui {
     namespace impl {
         class Expanded : public cocos2d::CCNode {
         public:
             size_t m_flex;
+            Axis m_mainAxis;
 
             static Expanded* create(size_t flex) {
                 auto ret = new (std::nothrow) Expanded();
@@ -30,6 +32,52 @@ namespace ui {
                 return true;
             }
         };
+
+        class ExpandedLayout : public cocos2d::Layout {
+        public:
+            size_t m_flex;
+
+            static ExpandedLayout* create(size_t flex) {
+                auto ret = new (std::nothrow) ExpandedLayout();
+                if (ret) {
+                    ret->m_flex = flex;
+                    ret->autorelease();
+                    return ret;
+                }
+                return nullptr;
+            }
+
+            void apply(cocos2d::CCNode* in) override {
+                auto [minSize, maxSize] = utils::getConstraints(in);
+                if (auto expanded = dynamic_cast<Expanded*>(in)) {
+                    switch (expanded->m_mainAxis) {
+                        case Axis::Horizontal:
+                            minSize.width = maxSize.width;
+                            break;
+                        case Axis::Vertical:
+                            minSize.height = maxSize.height;
+                            break;
+                    }
+                }
+                if (auto child = utils::getChild(in)) {
+                    utils::setConstraints(child, minSize, maxSize);
+                    child->updateLayout();
+
+                    in->setContentSize(child->getContentSize());
+
+                    child->ignoreAnchorPointForPosition(false);
+                    child->setPosition(in->getContentSize() / 2.f);
+                    child->setAnchorPoint(ccp(0.5f, 0.5f));
+                }
+                else {
+                    in->setContentSize(minSize);
+                }
+            }
+
+            cocos2d::CCSize getSizeHint(cocos2d::CCNode* in) const override {
+                return in->getContentSize();
+            }
+        };
     }
 
     struct Expanded : BaseInitializer<Expanded> {
@@ -46,9 +94,8 @@ namespace ui {
 
             auto node = impl::Expanded::create(this->flex);
 
-            if (auto child = utils::applyChild(this, node)) {
-                utils::applyCopySize(this, node, child);
-            }
+            (void)utils::applyChild(this, node);
+            node->setLayout(impl::ExpandedLayout::create(this->flex));
 
             utils::applyID(this, node);
 

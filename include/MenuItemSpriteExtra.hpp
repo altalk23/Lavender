@@ -4,6 +4,7 @@
 
 #include "Base.hpp"
 #include "Utils.hpp"
+#include "ConstrainedLayout.hpp"
 
 namespace ui {
     struct MenuItemSpriteExtra : public BaseInitializer<MenuItemSpriteExtra> {
@@ -22,7 +23,7 @@ namespace ui {
             auto node = geode::cocos::CCMenuItemExt::createSpriteExtra(normal, callback);
 
             utils::applyID(this, node);
-            utils::applyCopySize(this, node, normal);
+            utils::applySingleConstrainedLayout(this, node);
 
             delete this;
             return node;

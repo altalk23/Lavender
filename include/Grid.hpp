@@ -6,11 +6,6 @@
 #include "Utils.hpp"
 
 namespace ui {
-    enum class Axis : int {
-        Horizontal,
-        Vertical
-    };
-
     namespace impl {
         class ColumnGridLayout : public cocos2d::Layout {
         public:
@@ -19,13 +14,15 @@ namespace ui {
             float m_mainAxisSpacing;
             float m_crossAxisSpacing;
             size_t m_crossAxisCount;
+            float m_childAspectRatio;
 
             static ColumnGridLayout* create(
                 VerticalDirection direction,
                 HorizontalDirection crossDirection,
                 float mainAxisSpacing,
                 float crossAxisSpacing,
-                size_t crossAxisCount
+                size_t crossAxisCount,
+                float childAspectRatio
             ) {
                 auto ret = new (std::nothrow) ColumnGridLayout();
                 if (ret) {
@@ -34,15 +31,38 @@ namespace ui {
                     ret->m_mainAxisSpacing = mainAxisSpacing;
                     ret->m_crossAxisSpacing = crossAxisSpacing;
                     ret->m_crossAxisCount = crossAxisCount;
+                    ret->m_childAspectRatio = childAspectRatio;
                     ret->autorelease();
                 }
                 return ret;
             }
-            virtual ~ColumnGridLayout() = default;
+
+            virtual std::pair<cocos2d::CCSize, cocos2d::CCSize> getConstraints(cocos2d::CCNode* in) const {
+                return utils::getConstraints(in);
+            }
+
+            virtual void setConstraints(cocos2d::CCNode* in, cocos2d::CCSize minSize, cocos2d::CCSize maxSize) const {
+                utils::setConstraints(in, minSize, maxSize);
+            }
 
             void apply(cocos2d::CCNode* in) override {
-                float crossAxisSpace = this->getNodeWidth(in) - (m_crossAxisCount - 1) * m_crossAxisSpacing;
+                auto [minSize, maxSize] = this->getConstraints(in);
+
+                this->setContentWidth(in, maxSize.width);
+                this->setContentHeight(in, maxSize.height);
+
+                auto const columnCount = m_crossAxisCount;
+                auto const columnSpaceCount = columnCount - 1;
+
+                auto const rowCount = (in->getChildrenCount() + columnCount - 1) / columnCount;
+                auto const rowSpaceCount = rowCount - 1;
+
+                float crossAxisSpace = maxSize.width - columnSpaceCount * m_crossAxisSpacing;
                 float singleCrossAxisSpace = crossAxisSpace / m_crossAxisCount;
+
+                float singleMainAxisSpace = singleCrossAxisSpace / m_childAspectRatio;
+
+                auto singleSpace = cocos2d::CCSize(singleCrossAxisSpace, singleMainAxisSpace);
 
                 std::vector<float> mainAxisOffsets(m_crossAxisCount, 0.0f);
                 float crossAxisOffset = 0.0f;
@@ -50,7 +70,8 @@ namespace ui {
                 for (size_t i = 0; i < in->getChildrenCount(); i++) {
                     auto child = static_cast<cocos2d::CCNode*>(in->getChildren()->objectAtIndex(i));
 
-                    this->setContentWidth(child, singleCrossAxisSpace);
+                    this->setConstraints(child, singleSpace, singleSpace);
+                    child->updateLayout();
 
                     auto childSize = this->getNodeSize(child);
                     auto crossAxisIndex = i % m_crossAxisCount;
@@ -74,7 +95,6 @@ namespace ui {
                     }
                     child->ignoreAnchorPointForPosition(false);
                     child->setAnchorPoint(ccp(0.5f, 0.5f));
-                    child->updateLayout();
 
                     crossAxisOffset += singleCrossAxisSpace + m_crossAxisSpacing;
                     mainAxisOffsets[crossAxisIndex] += childSize.height + m_mainAxisSpacing;
@@ -91,6 +111,10 @@ namespace ui {
 
             virtual void setContentWidth(cocos2d::CCNode* node, float width) const {
                 node->setContentWidth(width);
+            }
+
+            virtual void setContentHeight(cocos2d::CCNode* node, float height) const {
+                node->setContentHeight(height);
             }
 
             virtual void setNodePositionX(cocos2d::CCNode* node, float x) const {
@@ -121,7 +145,8 @@ namespace ui {
                 VerticalDirection crossDirection,
                 float mainAxisSpacing,
                 float crossAxisSpacing,
-                size_t crossAxisCount
+                size_t crossAxisCount,
+                float childAspectRatio
             ) {
                 auto ret = new (std::nothrow) RowGridLayout();
                 if (ret) {
@@ -130,12 +155,23 @@ namespace ui {
                     ret->m_mainAxisSpacing = mainAxisSpacing;
                     ret->m_crossAxisSpacing = crossAxisSpacing;
                     ret->m_crossAxisCount = crossAxisCount;
+                    ret->m_childAspectRatio = childAspectRatio;
                     ret->autorelease();
                 }
                 return ret;
             }
 
-            virtual ~RowGridLayout() = default;
+            std::pair<cocos2d::CCSize, cocos2d::CCSize> getConstraints(cocos2d::CCNode* in) const override {
+                auto [minSize, maxSize] = utils::getConstraints(in);
+                return std::pair<cocos2d::CCSize, cocos2d::CCSize>(
+                    cocos2d::CCSize(minSize.height, minSize.width),
+                    cocos2d::CCSize(maxSize.height, maxSize.width)
+                );
+            }
+
+            void setConstraints(cocos2d::CCNode* in, cocos2d::CCSize minSize, cocos2d::CCSize maxSize) const override {
+                utils::setConstraints(in, cocos2d::CCSize(minSize.height, minSize.width), cocos2d::CCSize(maxSize.height, maxSize.width));
+            }
 
             cocos2d::CCSize getNodeSize(cocos2d::CCNode* node) const override {
                 return cocos2d::CCSize(node->getContentSize().height, node->getContentSize().width);
@@ -143,6 +179,10 @@ namespace ui {
 
             void setContentWidth(cocos2d::CCNode* node, float width) const override {
                 node->setContentHeight(width);
+            }
+
+            void setContentHeight(cocos2d::CCNode* node, float height) const override {
+                node->setContentWidth(height);
             }
 
             void setNodePositionX(cocos2d::CCNode* node, float x) const override {
@@ -174,6 +214,7 @@ namespace ui {
         HorizontalDirection horizontalDirection = HorizontalDirection::LeftToRight;
         Axis axis = Axis::Vertical;
         size_t crossAxisCount = 2;
+        float childAspectRatio = 1.f;
 
         cocos2d::CCNode* construct() {
             if (crossAxisCount < 1) {
@@ -193,7 +234,8 @@ namespace ui {
                     node->setLayout(
                         impl::ColumnGridLayout::create(
                             this->verticalDirection, this->horizontalDirection,
-                            this->mainAxisSpacing, this->crossAxisSpacing, this->crossAxisCount
+                            this->mainAxisSpacing, this->crossAxisSpacing,
+                            this->crossAxisCount, this->childAspectRatio
                         )
                     );
                     break;
@@ -201,7 +243,8 @@ namespace ui {
                     node->setLayout(
                         impl::RowGridLayout::create(
                             this->horizontalDirection, this->verticalDirection,
-                            this->mainAxisSpacing, this->crossAxisSpacing, this->crossAxisCount
+                            this->mainAxisSpacing, this->crossAxisSpacing, 
+                            this->crossAxisCount, this->childAspectRatio
                         )
                     );
                     break;
