@@ -74,23 +74,15 @@ class $modify(MyMenuLayer, MenuLayer) {
 				// 	},
 				// },
 				.child = new ui::Center {
-					.child = new ui::Column {
-						.id = "my-row"_spr,
-						.children = {
-							new ui::TextArea {
-								.id = "my-text"_spr,
-								.text = "lorem ipsum dolor sit amet consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-								.font = "chatFont.fnt",
-								.color = ccc4(142, 65, 165, 255),
-							},
-							new ui::TextInput {
-								.id = "my-input"_spr,
-								.placeholder = "Enter your name",
-								.font = "bigFont.fnt",
-								.maxCharCount = 20,
-								.callback = [](std::string const& text) {
-									log::debug("User entered: {}", text);
-								},
+					.child = new ui::ScrollLayer {
+						.child = new ui::Column {
+							.id = "my-column"_spr,
+							.count = 20,
+							.builder = [](auto i) {
+								return new ui::LayerColor {
+									.size = cocos2d::CCSize(100.f, 40.f),
+									.color = ccc4(i, 255, 255, 255),
+								};
 							},
 						},
 					},

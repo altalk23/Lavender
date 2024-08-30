@@ -20,3 +20,6 @@
 #include "TextArea.hpp"
 #include "TextInput.hpp"
 #include "Hidden.hpp"
+#include "Action.hpp"
+#include "Transform.hpp"
+#include "ScrollLayer.hpp"

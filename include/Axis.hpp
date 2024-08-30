@@ -71,6 +71,10 @@ namespace ui {
                     }
                 }
 
+                if (totalHeight > maxSize.height) {
+                    this->warnConstraintViolation(totalHeight, maxSize.height);
+                }
+
                 float const remainingHeight = maxSize.height - totalHeight;
 
                 for (auto expanded : expandeds) {
@@ -88,7 +92,12 @@ namespace ui {
                 totalWidth = std::max(totalWidth, minSize.width);
 
                 this->setContentWidth(in, totalWidth);
-                this->setContentHeight(in, maxSize.height);
+                if (maxSize.height == FLT_MAX) {
+                    this->setContentHeight(in, totalHeight);
+                }
+                else {
+                    this->setContentHeight(in, maxSize.height);
+                }
 
                 float gap = remainingHeight;
                 float offset = 0.0f;
@@ -161,10 +170,6 @@ namespace ui {
                             offset += this->getNodeHeight(child) + gap;
                             break;
                     }
-                }
-
-                if (totalHeight > maxSize.height) {
-                    this->warnConstraintViolation(totalHeight, maxSize.height);
                 }
             }
 

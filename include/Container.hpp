@@ -104,8 +104,8 @@ namespace ui {
         LAVENDER_ADD_SIZE();
 
         EdgeInsets padding;
-
         bool hidden = false;
+        cocos2d::CCAction* action = nullptr;
 
         cocos2d::CCNode* construct() const {
             auto node = cocos2d::CCNode::create();
@@ -127,6 +127,10 @@ namespace ui {
             utils::applySize(this, node);
 
             node->setVisible(!this->hidden);
+
+            if (this->action) {
+                node->runAction(this->action);
+            }
 
             delete this;
             return node;
