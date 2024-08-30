@@ -78,7 +78,7 @@ namespace ui {
         HorizontalDirection horizontalDirection = HorizontalDirection::LeftToRight;
     
         cocos2d::CCNode* construct() const {
-            auto node = geode::ScrollLayer::create(ccp(67, 320), true, this->axis == Axis::Vertical);
+            auto node = geode::ScrollLayer::create(ccp(0, 0), true, this->axis == Axis::Vertical);
 
             if (!utils::applyChildrenBuilder(this, node->m_contentLayer)) {
                 (void)utils::applyChildren(this, node->m_contentLayer);
