@@ -105,7 +105,9 @@ namespace ui {
 
         EdgeInsets padding;
 
-        cocos2d::CCNode* construct() {
+        bool hidden = false;
+
+        cocos2d::CCNode* construct() const {
             auto node = cocos2d::CCNode::create();
 
             if (auto child = utils::applyChild(this, node)) {
@@ -123,6 +125,8 @@ namespace ui {
 
             utils::applyID(this, node);
             utils::applySize(this, node);
+
+            node->setVisible(!this->hidden);
 
             delete this;
             return node;

@@ -86,7 +86,7 @@ namespace ui {
         LAVENDER_ADD_ID();
         LAVENDER_ADD_CHILD();
     
-        cocos2d::CCNode* construct() {
+        cocos2d::CCNode* construct() const {
             auto node = impl::MenuWrapper::create();
 
             (void)utils::applyChild(this, node);

@@ -13,7 +13,7 @@ namespace ui {
 
         std::function<void(cocos2d::CCObject*)> callback;
 
-        cocos2d::CCNode* construct() {
+        cocos2d::CCNode* construct() const {
             if (this->child == nullptr) {
                 delete this;
                 return nullptr;

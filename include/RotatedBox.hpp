@@ -58,7 +58,7 @@ namespace ui {
         LAVENDER_ADD_CHILD();
         int quarterTurns = 0;
 
-        cocos2d::CCNode* construct() {
+        cocos2d::CCNode* construct() const {
             auto node = cocos2d::CCNode::create();
 
             if (auto child = utils::applyChild(this, node)) {

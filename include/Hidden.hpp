@@ -5,23 +5,24 @@
 #include "Base.hpp"
 #include "Utils.hpp"
 
+#include "ConstrainedLayout.hpp"
+
 namespace ui {
-    struct Scene : public BaseInitializer<Scene> {
+    struct Hidden : public BaseInitializer<Hidden> {
         LAVENDER_ADD_ID();
         LAVENDER_ADD_CHILD();
 
+        bool hidden = true;
+    
         cocos2d::CCNode* construct() const {
-            auto node = cocos2d::CCScene::create();
-
-            node->setAnchorPoint(ccp(0, 0));
+            auto node = cocos2d::CCNode::create();
 
             (void)utils::applyChild(this, node);
             utils::applySingleConstrainedLayout(this, node);
 
-            auto winSize = cocos2d::CCDirector::sharedDirector()->getWinSize();
-            node->setUserObject("constrain"_spr, impl::ConstrainedObject::create(ccp(0, 0), winSize));
-
             utils::applyID(this, node);
+
+            node->setVisible(!this->hidden);
 
             delete this;
             return node;

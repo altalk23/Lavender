@@ -26,7 +26,7 @@ namespace ui {
                 return nullptr;
             }
 
-            bool initWithColor(const cocos2d::ccColor4B& color, float width, float height) {
+            bool initWithColor(const cocos2d::ccColor4B& color, float width, float height) override {
                 if (!cocos2d::CCLayerColor::initWithColor(color, width, height)) {
                     return false;
                 }
@@ -34,20 +34,10 @@ namespace ui {
                 this->setAnchorPoint(ccp(0, 0));
                 this->setPosition(ccp(0, 0));
 
-                if (this->onTouchBeganFunction) {
-                    this->setTouchEnabled(true);
-                }
-                if (this->keyBackClickedFunction) {
-                    this->setKeypadEnabled(true);
-                }
-                if (this->keyDownFunction || this->keyUpFunction) {
-                    this->setKeyboardEnabled(true);
-                }
-
                 return true;
             }
 
-            void keyBackClicked() {
+            void keyBackClicked() override {
                 if (this->keyBackClickedFunction) {
                     this->keyBackClickedFunction();
                 }
@@ -109,7 +99,7 @@ namespace ui {
         std::function<void(cocos2d::enumKeyCodes)> keyDown;
         std::function<void(cocos2d::enumKeyCodes)> keyUp;
 
-        cocos2d::CCNode* construct() {
+        cocos2d::CCNode* construct() const {
             auto node = impl::LayerColorWrapper::create(this->color, 0.f, 0.f);
 
             (void)utils::applyChild(this, node);
@@ -120,10 +110,12 @@ namespace ui {
 
             if (this->keyBackClicked) {
                 node->keyBackClickedFunction = this->keyBackClicked;
+                node->setKeypadEnabled(true);
             }
 
             if (this->onTouchBegan) {
                 node->onTouchBeganFunction = this->onTouchBegan;
+                node->setTouchEnabled(true);
             }
 
             if (this->onTouchMoved) {
@@ -140,10 +132,12 @@ namespace ui {
 
             if (this->keyDown) {
                 node->keyDownFunction = this->keyDown;
+                node->setKeyboardEnabled(true);
             }
 
             if (this->keyUp) {
                 node->keyUpFunction = this->keyUp;
+                node->setKeyboardEnabled(true);
             }
 
             delete this;

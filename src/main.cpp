@@ -29,7 +29,12 @@ class $modify(MyMenuLayer, MenuLayer) {
 		return true;
 	}
 
-	void onMyButton(CCObject*) {
+	struct Fields {
+		float width = 200.f;
+		cocos2d::CCScene* scene = nullptr;
+	};
+
+	cocos2d::CCScene* getScene() {
 		auto gen = new ui::Scene {
 			.id = "my-scene"_spr,
 			.child = new ui::LayerColor {
@@ -69,24 +74,25 @@ class $modify(MyMenuLayer, MenuLayer) {
 				// 	},
 				// },
 				.child = new ui::Center {
-					// .child = new ui::Row {
-					// 	.id = "my-row"_spr,
-					// 	.children = {
-					// 		new ui::TextArea {
-					// 			.id = "my-text"_spr,
-					// 			.text = "lorem ipsum dolor sit amet consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-					// 			.font = "chatfont.fnt",
-					// 			.color = ccc4(142, 65, 165, 255),
-					// 			.wrapping = ui::TextWrapping::None,
-					// 		},
-					// 	},
-					// },
-					.child = new ui::TextArea {
-						.id = "my-text"_spr,
-						.text = "lorem ipsum dolor sit amet consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-						.font = "chatfont.fnt",
-						.color = ccc4(142, 65, 165, 255),
-						.wrapping = ui::TextWrapping::None,
+					.child = new ui::Column {
+						.id = "my-row"_spr,
+						.children = {
+							new ui::TextArea {
+								.id = "my-text"_spr,
+								.text = "lorem ipsum dolor sit amet consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+								.font = "chatFont.fnt",
+								.color = ccc4(142, 65, 165, 255),
+							},
+							new ui::TextInput {
+								.id = "my-input"_spr,
+								.placeholder = "Enter your name",
+								.font = "bigFont.fnt",
+								.maxCharCount = 20,
+								.callback = [](std::string const& text) {
+									log::debug("User entered: {}", text);
+								},
+							},
+						},
 					},
 				},
 			},
@@ -94,6 +100,12 @@ class $modify(MyMenuLayer, MenuLayer) {
 
 		auto node = gen->get();
 
-		CCDirector::sharedDirector()->replaceScene(static_cast<CCScene*>(node));
+		m_fields->scene = static_cast<cocos2d::CCScene*>(node);
+
+		return m_fields->scene;
+	}
+
+	void onMyButton(CCObject*) {
+		CCDirector::sharedDirector()->replaceScene(this->getScene());
 	}
 };

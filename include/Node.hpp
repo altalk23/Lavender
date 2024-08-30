@@ -17,7 +17,7 @@ namespace ui {
         using GeneratorType = std::function<cocos2d::CCNode*()>;
         std::optional<GeneratorType> generator;
 
-        cocos2d::CCNode* construct() {
+        cocos2d::CCNode* construct() const {
             cocos2d::CCNode* node = nullptr;
 
             if (this->node.has_value()) {

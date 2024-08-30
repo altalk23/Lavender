@@ -103,7 +103,7 @@ namespace ui {
 
         size_t flex = 1;
 
-        cocos2d::CCNode* construct() {
+        cocos2d::CCNode* construct() const {
             if (this->flex < 1) {
                 delete this;
                 return nullptr;

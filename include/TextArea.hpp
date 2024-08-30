@@ -6,12 +6,6 @@
 #include "Utils.hpp"
 
 namespace ui {
-    enum class TextAlignment {
-        Left,
-        Center,
-        Right,
-    };
-
     enum class TextWrapping {
         None,
         Word,
@@ -107,7 +101,7 @@ namespace ui {
         LAVENDER_ADD_ID();
 
         std::string text;
-        std::string font = "chatfont.fnt";
+        std::string font = "chatFont.fnt";
 
         cocos2d::ccColor4B color = cocos2d::ccc4(255, 255, 255, 255);
         TextAlignment alignment = TextAlignment::Left;
@@ -117,7 +111,7 @@ namespace ui {
         std::optional<size_t> maxLines;
         std::optional<float> linePadding;
 
-        cocos2d::CCNode* construct() {
+        cocos2d::CCNode* construct() const {
             auto node = geode::SimpleTextArea::create(this->text, this->font);
 
             utils::applyID(this, node);

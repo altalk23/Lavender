@@ -69,7 +69,7 @@ namespace ui {
         Alignment alignment = Alignment::Center;
         StackFit fit = StackFit::Loose;
 
-        cocos2d::CCNode* construct() {
+        cocos2d::CCNode* construct() const {
             auto node = cocos2d::CCNode::create();
             utils::applyChildren(this, node);
 

@@ -142,7 +142,7 @@ namespace ui {
         BoxFit fit = BoxFit::Contain;
         Alignment alignment = Alignment::Center;
 
-        cocos2d::CCNode* construct() {
+        cocos2d::CCNode* construct() const {
             auto node = cocos2d::CCNode::create();
 
             (void)utils::applyChild(this, node);

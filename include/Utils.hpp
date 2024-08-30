@@ -220,4 +220,10 @@ namespace ui {
     inline Alignment Alignment::BottomLeft = { -1.f, -1.f };
     inline Alignment Alignment::BottomCenter = { 0.f, -1.f };
     inline Alignment Alignment::BottomRight = { 1.f, -1.f };
+
+    enum class TextAlignment {
+        Left,
+        Center,
+        Right,
+    };
 }

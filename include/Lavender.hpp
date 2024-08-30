@@ -18,3 +18,5 @@
 #include "RotatedBox.hpp"
 #include "FittedBox.hpp"
 #include "TextArea.hpp"
+#include "TextInput.hpp"
+#include "Hidden.hpp"

@@ -216,7 +216,7 @@ namespace ui {
         size_t crossAxisCount = 2;
         float childAspectRatio = 1.f;
 
-        cocos2d::CCNode* construct() {
+        cocos2d::CCNode* construct() const {
             if (crossAxisCount < 1) {
                 delete this;
                 return nullptr;

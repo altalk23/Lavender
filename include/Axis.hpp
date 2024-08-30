@@ -274,7 +274,7 @@ namespace ui {
         CrossAxisAlignment crossAxis = CrossAxisAlignment::Center;
         VerticalDirection direction = VerticalDirection::TopToBottom;
 
-        cocos2d::CCNode* construct() {
+        cocos2d::CCNode* construct() const {
             auto node = cocos2d::CCNode::create();
 
             utils::applyID(this, node);
@@ -301,7 +301,7 @@ namespace ui {
         CrossAxisAlignment crossAxis = CrossAxisAlignment::Center;
         HorizontalDirection direction = HorizontalDirection::LeftToRight;
 
-        cocos2d::CCNode* construct() {
+        cocos2d::CCNode* construct() const {
             auto node = cocos2d::CCNode::create();
 
             utils::applyID(this, node);
