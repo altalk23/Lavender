@@ -73,6 +73,9 @@ namespace ui {
         LAVENDER_ADD_CHILDREN_BUILDER();
 
         Axis axis = Axis::Vertical;
+
+        VerticalDirection verticalDirection = VerticalDirection::TopToBottom;
+        HorizontalDirection horizontalDirection = HorizontalDirection::LeftToRight;
     
         cocos2d::CCNode* construct() const {
             auto node = geode::ScrollLayer::create(ccp(67, 320), true, this->axis == Axis::Vertical);
@@ -87,12 +90,12 @@ namespace ui {
 
             if (this->axis == Axis::Vertical) {
                 node->m_contentLayer->setLayout(impl::ColumnLayout::create(
-                    MainAxisAlignment::Start, CrossAxisAlignment::Stretch, VerticalDirection::TopToBottom
+                    MainAxisAlignment::Start, CrossAxisAlignment::Stretch, verticalDirection
                 ));
             }
             else {
                 node->m_contentLayer->setLayout(impl::RowLayout::create(
-                    MainAxisAlignment::Start, CrossAxisAlignment::Stretch, HorizontalDirection::LeftToRight
+                    MainAxisAlignment::Start, CrossAxisAlignment::Stretch, horizontalDirection
                 ));
             }
 

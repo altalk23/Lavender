@@ -72,7 +72,8 @@ class $modify(MyMenuLayer, MenuLayer) {
 				.child = new ui::Center {
 					.child = new ui::ScrollLayer {
 						.axis = ui::Axis::Vertical,
-						.count = 50,
+						.verticalDirection = ui::VerticalDirection::BottomToTop,
+						.count = 10,
 						.builder = [](size_t index) {
 							return new ui::TextArea {
 								.text = fmt::format("Hello, world! {}", index),
