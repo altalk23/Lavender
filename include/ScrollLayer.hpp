@@ -25,12 +25,15 @@ namespace ui {
 
             void apply(cocos2d::CCNode* in) override {
                 auto [minSize, maxSize] = utils::getConstraints(in);
+                auto emulatedMinSize = minSize;
                 auto emulatedMaxSize = maxSize;
                 switch (m_axis) {
                     case Axis::Horizontal:
+                        emulatedMinSize.width = maxSize.width;
                         emulatedMaxSize.width = FLT_MAX;
                         break;
                     case Axis::Vertical:
+                        emulatedMinSize.height = maxSize.height;
                         emulatedMaxSize.height = FLT_MAX;
                         break;
                 }
@@ -38,28 +41,23 @@ namespace ui {
                 if (auto scrollLayer = geode::cast::typeinfo_cast<geode::ScrollLayer*>(in)) {
                     auto child = scrollLayer->m_contentLayer;
 
-                    utils::setConstraints(child, minSize, emulatedMaxSize);
+                    utils::setConstraints(child, emulatedMinSize, emulatedMaxSize);
                     child->updateLayout();
 
                     switch (m_axis) {
                         case Axis::Horizontal:
                             in->setContentHeight(std::max(child->getContentHeight(), minSize.height));
                             in->setContentWidth(maxSize.width);
-                            child->setPositionY(in->getContentHeight() / 2);
+                            child->setPositionY(0.f);
                             break;
                         case Axis::Vertical:
                             in->setContentWidth(std::max(child->getContentWidth(), minSize.width));
                             in->setContentHeight(maxSize.height);
-                            child->setPositionX(in->getContentWidth() / 2);
+                            child->setPositionX(0.f);
                             break;
                     }
 
-                    child->ignoreAnchorPointForPosition(false);
-                    child->setAnchorPoint(ccp(0.5f, 0.5f));
                     scrollLayer->scrollToTop();
-                }
-                else {
-                    in->setContentSize(minSize);
                 }
             }
 
@@ -71,19 +69,32 @@ namespace ui {
 
     struct ScrollLayer : public BaseInitializer<ScrollLayer> {
         LAVENDER_ADD_ID();
-        LAVENDER_ADD_CHILD();
+        LAVENDER_ADD_CHILDREN();
+        LAVENDER_ADD_CHILDREN_BUILDER();
 
         Axis axis = Axis::Vertical;
     
         cocos2d::CCNode* construct() const {
-            auto node = geode::ScrollLayer::create(ccp(0, 0), true, this->axis == Axis::Vertical);
+            auto node = geode::ScrollLayer::create(ccp(67, 320), true, this->axis == Axis::Vertical);
 
-            (void)utils::applyChild(this, node->m_contentLayer);
+            if (!utils::applyChildrenBuilder(this, node->m_contentLayer)) {
+                (void)utils::applyChildren(this, node->m_contentLayer);
+            }
+
             node->setLayout(impl::ScrollLayerLayout::create(this->axis));
 
             utils::applyID(this, node);
 
-            utils::applySingleConstrainedLayout(this, node->m_contentLayer);
+            if (this->axis == Axis::Vertical) {
+                node->m_contentLayer->setLayout(impl::ColumnLayout::create(
+                    MainAxisAlignment::Start, CrossAxisAlignment::Stretch, VerticalDirection::TopToBottom
+                ));
+            }
+            else {
+                node->m_contentLayer->setLayout(impl::RowLayout::create(
+                    MainAxisAlignment::Start, CrossAxisAlignment::Stretch, HorizontalDirection::LeftToRight
+                ));
+            }
 
             delete this;
             return node;

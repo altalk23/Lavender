@@ -29,18 +29,14 @@ class $modify(MyMenuLayer, MenuLayer) {
 		return true;
 	}
 
-	struct Fields {
-		float width = 200.f;
-		cocos2d::CCScene* scene = nullptr;
-	};
-
-	cocos2d::CCScene* getScene() {
+	void onMyButton(CCObject*) {
 		auto gen = new ui::Scene {
 			.id = "my-scene"_spr,
 			.child = new ui::LayerColor {
 				.id = "my-layer"_spr,
 				.color = ccc4(8, 85, 71, 255),
 				.keyBackClicked = [](){
+					log::debug("Back button clicked!");
 					CCDirector::sharedDirector()->replaceScene(MenuLayer::scene(false));
 				},
 				// .child = new ui::Grid {
@@ -75,15 +71,13 @@ class $modify(MyMenuLayer, MenuLayer) {
 				// },
 				.child = new ui::Center {
 					.child = new ui::ScrollLayer {
-						.child = new ui::Column {
-							.id = "my-column"_spr,
-							.count = 20,
-							.builder = [](auto i) {
-								return new ui::LayerColor {
-									.size = cocos2d::CCSize(100.f, 40.f),
-									.color = ccc4(i, 255, 255, 255),
-								};
-							},
+						.axis = ui::Axis::Vertical,
+						.count = 50,
+						.builder = [](size_t index) {
+							return new ui::TextArea {
+								.text = fmt::format("Hello, world! {}", index),
+								.color = ccc4(255, 255, 255, 255),
+							};
 						},
 					},
 				},
@@ -92,12 +86,6 @@ class $modify(MyMenuLayer, MenuLayer) {
 
 		auto node = gen->get();
 
-		m_fields->scene = static_cast<cocos2d::CCScene*>(node);
-
-		return m_fields->scene;
-	}
-
-	void onMyButton(CCObject*) {
-		CCDirector::sharedDirector()->replaceScene(this->getScene());
+		CCDirector::sharedDirector()->replaceScene(static_cast<cocos2d::CCScene*>(node));
 	}
 };

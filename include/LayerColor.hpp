@@ -41,18 +41,26 @@ namespace ui {
                 if (this->keyBackClickedFunction) {
                     this->keyBackClickedFunction();
                 }
+                else {
+                    cocos2d::CCLayerColor::keyBackClicked();
+                }
             }
 
             bool ccTouchBegan(cocos2d::CCTouch* touch, cocos2d::CCEvent* event) override {
                 if (this->onTouchBeganFunction) {
                     return this->onTouchBeganFunction(touch, event);
                 }
-                return false;
+                else {
+                    return cocos2d::CCLayerColor::ccTouchBegan(touch, event);
+                }
             }
 
             void ccTouchMoved(cocos2d::CCTouch* touch, cocos2d::CCEvent* event) override {
                 if (this->onTouchMovedFunction) {
                     this->onTouchMovedFunction(touch, event);
+                }
+                else {
+                    cocos2d::CCLayerColor::ccTouchMoved(touch, event);
                 }
             }
 
@@ -60,11 +68,17 @@ namespace ui {
                 if (this->onTouchEndedFunction) {
                     this->onTouchEndedFunction(touch, event);
                 }
+                else {
+                    cocos2d::CCLayerColor::ccTouchEnded(touch, event);
+                }
             }
 
             void ccTouchCancelled(cocos2d::CCTouch* touch, cocos2d::CCEvent* event) override {
                 if (this->onTouchCancelledFunction) {
                     this->onTouchCancelledFunction(touch, event);
+                }
+                else {
+                    cocos2d::CCLayerColor::ccTouchCancelled(touch, event);
                 }
             }
 
@@ -72,11 +86,17 @@ namespace ui {
                 if (this->keyDownFunction) {
                     this->keyDownFunction(keyCode);
                 }
+                else {
+                    cocos2d::CCLayerColor::keyDown(keyCode);
+                }
             }
 
             void keyUp(cocos2d::enumKeyCodes keyCode) override {
                 if (this->keyUpFunction) {
                     this->keyUpFunction(keyCode);
+                }
+                else {
+                    cocos2d::CCLayerColor::keyUp(keyCode);
                 }
             }
         };

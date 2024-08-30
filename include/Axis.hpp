@@ -93,7 +93,7 @@ namespace ui {
 
                 this->setContentWidth(in, totalWidth);
                 if (maxSize.height == FLT_MAX) {
-                    this->setContentHeight(in, totalHeight);
+                    this->setContentHeight(in, std::max(totalHeight, minSize.height));
                 }
                 else {
                     this->setContentHeight(in, maxSize.height);

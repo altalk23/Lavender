@@ -48,9 +48,6 @@ namespace ui {
             void apply(cocos2d::CCNode* in) override {
                 auto [minSize, maxSize] = this->getConstraints(in);
 
-                this->setContentWidth(in, maxSize.width);
-                this->setContentHeight(in, maxSize.height);
-
                 auto const columnCount = m_crossAxisCount;
                 auto const columnSpaceCount = columnCount - 1;
 
@@ -63,6 +60,15 @@ namespace ui {
                 float singleMainAxisSpace = singleCrossAxisSpace / m_childAspectRatio;
 
                 auto singleSpace = cocos2d::CCSize(singleCrossAxisSpace, singleMainAxisSpace);
+
+                this->setContentWidth(in, maxSize.width);
+                if (maxSize.height == FLT_MAX) {
+                    auto const totalHeight = singleMainAxisSpace * rowCount + m_mainAxisSpacing * (rowCount - 1);
+                    this->setContentHeight(in, std::max(minSize.height, totalHeight));
+                }
+                else {
+                    this->setContentHeight(in, maxSize.height);
+                }
 
                 std::vector<float> mainAxisOffsets(m_crossAxisCount, 0.0f);
                 float crossAxisOffset = 0.0f;
