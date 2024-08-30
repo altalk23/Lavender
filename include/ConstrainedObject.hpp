@@ -21,6 +21,26 @@ namespace ui {
                 }
                 return nullptr;
             }
+
+            virtual size_t getABIVersion() const {
+                return 1;
+            }
+
+            virtual cocos2d::CCSize getMinSize() const {
+                return m_minSize;
+            }
+
+            virtual cocos2d::CCSize getMaxSize() const {
+                return m_maxSize;
+            }
+
+            virtual void setMinSize(cocos2d::CCSize size) {
+                m_minSize = size;
+            }
+
+            virtual void setMaxSize(cocos2d::CCSize size) {
+                m_maxSize = size;
+            }
         };
     }
 }

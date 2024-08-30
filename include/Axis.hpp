@@ -53,11 +53,9 @@ namespace ui {
                 std::vector<Expanded*> expandeds;
 
                 for (auto child : geode::cocos::CCArrayExt<cocos2d::CCNode*>(in->getChildren())) {
-                    // dynamic cast because other uses of this header 
-                    // may have different expanded implementations
-                    // that differ in their abi
-                    if (auto expanded = dynamic_cast<Expanded*>(child)) {
-                        flexCount += expanded->m_flex;
+                    auto expanded = geode::cast::typeinfo_cast<Expanded*>(child);
+                    if (expanded && expanded->getABIVersion() >= 1) {
+                        flexCount += expanded->getFlex();
                         expandeds.push_back(expanded);
                     }
                     else {
@@ -76,10 +74,12 @@ namespace ui {
                 float const remainingHeight = maxSize.height - totalHeight;
 
                 for (auto expanded : expandeds) {
-                    auto const height = remainingHeight / flexCount * expanded->m_flex;
+                    if (expanded->getABIVersion() >= 1) {
+                        auto const height = remainingHeight / flexCount * expanded->getFlex();
 
-                    expanded->m_mainAxis = this->getMainAxis();
-                    this->setConstraints(expanded, ccp(0, 0), ccp(maxSize.width, height));
+                        expanded->setMainAxis(this->getMainAxis());
+                        this->setConstraints(expanded, ccp(0, 0), ccp(maxSize.width, height));
+                    }
                     expanded->updateLayout();
 
                     totalWidth = std::max(totalWidth, this->getNodeWidth(expanded));
@@ -132,10 +132,7 @@ namespace ui {
                     offset = this->getNodeHeight(in) - offset;
                 }
 
-                for (size_t i = 0; i < in->getChildrenCount(); i++) {
-                    auto child = static_cast<cocos2d::CCNode*>(in->getChildren()->objectAtIndex(i));
-
-                    
+                for (auto child : geode::cocos::CCArrayExt<cocos2d::CCNode*>(in->getChildren())) {                    
                     auto center = this->getNodeSize(child) / 2.0f;
                     if (m_direction == VerticalDirection::TopToBottom) {
                         center.height = -center.height;
@@ -165,6 +162,14 @@ namespace ui {
                             break;
                     }
                 }
+
+                if (totalHeight > maxSize.height) {
+                    this->warnConstraintViolation(totalHeight, maxSize.height);
+                }
+            }
+
+            virtual void warnConstraintViolation(float height, float maxHeight) {
+                geode::log::warn("Column height constraint violation {} > {}", height, maxHeight);
             }
 
             virtual cocos2d::CCSize getNodeSize(cocos2d::CCNode* node) const {
@@ -212,6 +217,10 @@ namespace ui {
                     return ret;
                 }
                 return nullptr;
+            }
+
+            void warnConstraintViolation(float width, float maxWidth) override {
+                geode::log::warn("Row width constraint violation {} > {}", width, maxWidth);
             }
 
             std::pair<cocos2d::CCSize, cocos2d::CCSize> getConstraints(cocos2d::CCNode* in) const override {

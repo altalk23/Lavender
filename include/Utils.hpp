@@ -5,11 +5,15 @@
 
 namespace ui::utils {
     #define LAVENDER_ADD_ID() \
-        std::optional<std::string> id
+        std::optional<std::string> id; \
+        cocos2d::CCNode** store = nullptr
     
     void applyID(auto const* data, cocos2d::CCNode* node) {
         if (data->id.has_value()) {
             node->setID(data->id.value().c_str());
+        }
+        if (data->store) {
+            *data->store = node;
         }
     }
 
@@ -117,10 +121,11 @@ namespace ui::utils {
     }
 
     std::pair<cocos2d::CCSize, cocos2d::CCSize> getConstraints(cocos2d::CCNode* node) {
-        auto const constrain = dynamic_cast<impl::ConstrainedObject*>(node->getUserObject("constrain"_spr));
-        auto const minSize = constrain ? constrain->m_minSize : cocos2d::CCSize{ 0.f, 0.f };
-        auto const maxSize = constrain ? constrain->m_maxSize : cocos2d::CCSize{ FLT_MAX, FLT_MAX };
-        return { minSize, maxSize };
+        auto const constrain = geode::cast::typeinfo_cast<impl::ConstrainedObject*>(node->getUserObject("constrain"_spr));
+        if (constrain && constrain->getABIVersion() >= 1) {
+            return { constrain->getMinSize(), constrain->getMaxSize() };
+        }
+        return { cocos2d::CCSize{ 0.f, 0.f }, cocos2d::CCSize{ FLT_MAX, FLT_MAX } };
     }
 
     void setConstraints(cocos2d::CCNode* child, cocos2d::CCSize minSize, cocos2d::CCSize maxSize) {

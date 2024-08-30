@@ -14,3 +14,7 @@
 #include "Scale9Sprite.hpp"
 #include "Scene.hpp"
 #include "Align.hpp"
+#include "Stack.hpp"
+#include "RotatedBox.hpp"
+#include "FittedBox.hpp"
+#include "TextArea.hpp"

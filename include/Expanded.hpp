@@ -31,6 +31,22 @@ namespace ui {
                 m_flex = flex;
                 return true;
             }
+
+            virtual size_t getABIVersion() const {
+                return 1;
+            }
+
+            virtual size_t getFlex() const {
+                return m_flex;
+            }
+
+            virtual Axis getMainAxis() const {
+                return m_mainAxis;
+            }
+
+            virtual void setMainAxis(Axis axis) {
+                m_mainAxis = axis;
+            }
         };
 
         class ExpandedLayout : public cocos2d::Layout {
@@ -49,8 +65,9 @@ namespace ui {
 
             void apply(cocos2d::CCNode* in) override {
                 auto [minSize, maxSize] = utils::getConstraints(in);
-                if (auto expanded = dynamic_cast<Expanded*>(in)) {
-                    switch (expanded->m_mainAxis) {
+                auto expanded = geode::cast::typeinfo_cast<Expanded*>(in); 
+                if (expanded && expanded->getABIVersion() >= 1) {
+                    switch (expanded->getMainAxis()) {
                         case Axis::Horizontal:
                             minSize.width = maxSize.width;
                             break;

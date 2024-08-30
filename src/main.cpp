@@ -69,25 +69,25 @@ class $modify(MyMenuLayer, MenuLayer) {
 				// 	},
 				// },
 				.child = new ui::Center {
-					.child = new ui::Row {
-						.id = "my-grid"_spr,
-						.children = {
-							new ui::Flexible {
-								.child = new ui::LayerColor {
-									.id = "my-cell-1-1"_spr,
-									.color = ccc4(66, 60, 144, 255),
-									.size = cocos2d::CCSize { 100, 30 },
-								},	
-							},
-							new ui::Expanded {
-								.child = new ui::LayerColor {
-									.id = "my-cell-1-1"_spr,
-									.color = ccc4(25, 129, 15, 255),
-									.size = cocos2d::CCSize { 100, 100 },
-								},	
-							},
-						},
-					},	
+					// .child = new ui::Row {
+					// 	.id = "my-row"_spr,
+					// 	.children = {
+					// 		new ui::TextArea {
+					// 			.id = "my-text"_spr,
+					// 			.text = "lorem ipsum dolor sit amet consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+					// 			.font = "chatfont.fnt",
+					// 			.color = ccc4(142, 65, 165, 255),
+					// 			.wrapping = ui::TextWrapping::None,
+					// 		},
+					// 	},
+					// },
+					.child = new ui::TextArea {
+						.id = "my-text"_spr,
+						.text = "lorem ipsum dolor sit amet consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+						.font = "chatfont.fnt",
+						.color = ccc4(142, 65, 165, 255),
+						.wrapping = ui::TextWrapping::None,
+					},
 				},
 			},
 		};
