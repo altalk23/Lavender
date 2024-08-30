@@ -51,9 +51,10 @@ namespace ui {
 
     struct Align : public BaseInitializer<Align> {
         LAVENDER_ADD_ID();
-        LAVENDER_ADD_CHILD();
 
         Alignment alignment = Alignment::Center;
+
+        LAVENDER_ADD_CHILD();
 
         cocos2d::CCNode* construct() const {
             auto node = cocos2d::CCNode::create();

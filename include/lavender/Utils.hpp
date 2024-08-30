@@ -29,8 +29,9 @@ namespace ui::utils {
     }
 
     #define LAVENDER_ADD_CHILDREN_BUILDER() \
-        std::function<Base*(size_t)> builder; \
-        size_t count = 0
+        size_t count = 0; \
+        std::function<Base*(size_t)> builder
+        
 
     bool applyChildrenBuilder(auto const* data, cocos2d::CCNode* node) {
         if (data->builder) {

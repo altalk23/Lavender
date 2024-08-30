@@ -9,9 +9,10 @@
 namespace ui {
     struct MenuItemSpriteExtra : public BaseInitializer<MenuItemSpriteExtra> {
         LAVENDER_ADD_ID();
-        LAVENDER_ADD_CHILD();
 
         std::function<void(cocos2d::CCObject*)> callback;
+
+        LAVENDER_ADD_CHILD();
 
         cocos2d::CCNode* construct() const {
             if (this->child == nullptr) {

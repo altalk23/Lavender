@@ -6,25 +6,43 @@ set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 
 project(Lavender VERSION 1.0.0)
 
-add_library(${PROJECT_NAME} SHARED
-    src/main.cpp
-    # Add any extra C++ source files here
-)
+if (${CMAKE_CURRENT_SOURCE_DIR} STREQUAL ${CMAKE_SOURCE_DIR})
 
-target_compile_options(${PROJECT_NAME} PRIVATE
-    -Wno-reorder-init-list
-)
+    add_library(${PROJECT_NAME} SHARED
+        src/main.cpp
+        # Add any extra C++ source files here
+    )
 
-target_include_directories(${PROJECT_NAME} PUBLIC
-    include
-)
+    if (${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang")
+        target_compile_options(${PROJECT_NAME} PRIVATE
+            -Wno-reorder-init-list
+        )
+    endif()
 
-if (NOT DEFINED ENV{GEODE_SDK})
-    message(FATAL_ERROR "Unable to find Geode SDK! Please define GEODE_SDK environment variable to point to Geode")
+    target_include_directories(${PROJECT_NAME} PRIVATE
+        include
+        include/lavender
+    )
+
+    if (NOT DEFINED ENV{GEODE_SDK})
+        message(FATAL_ERROR "Unable to find Geode SDK! Please define GEODE_SDK environment variable to point to Geode")
+    else()
+        message(STATUS "Found Geode: $ENV{GEODE_SDK}")
+    endif()
+
+    add_subdirectory($ENV{GEODE_SDK} ${CMAKE_CURRENT_BINARY_DIR}/geode)
+
+    setup_geode_mod(${PROJECT_NAME})
 else()
-    message(STATUS "Found Geode: $ENV{GEODE_SDK}")
+    message(STATUS "Configuring Lavender as a subproject")
+    add_library(${PROJECT_NAME} INTERFACE)
+    target_include_directories(${PROJECT_NAME} INTERFACE
+        include
+    )
+
+    if (${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang")
+        target_compile_options(${PROJECT_NAME} INTERFACE
+            -Wno-reorder-init-list
+        )
+    endif()
 endif()
-
-add_subdirectory($ENV{GEODE_SDK} ${CMAKE_CURRENT_BINARY_DIR}/geode)
-
-setup_geode_mod(${PROJECT_NAME})

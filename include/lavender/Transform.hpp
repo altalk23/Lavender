@@ -10,7 +10,6 @@
 namespace ui {
     struct Transform : public BaseInitializer<Transform> {
         LAVENDER_ADD_ID();
-        LAVENDER_ADD_CHILD();
 
         LAVENDER_ADD_ROTATION();
         LAVENDER_ADD_SCALE();
@@ -18,6 +17,8 @@ namespace ui {
         std::optional<float> offsetX;
         std::optional<float> offsetY;
         std::optional<cocos2d::CCPoint> offset;
+
+        LAVENDER_ADD_CHILD();
     
         cocos2d::CCNode* construct() const {
             auto node = cocos2d::CCNode::create();

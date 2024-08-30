@@ -211,8 +211,6 @@ namespace ui {
 
     struct Grid : public BaseInitializer<Grid> {
         LAVENDER_ADD_ID();
-        LAVENDER_ADD_CHILDREN();
-        LAVENDER_ADD_CHILDREN_BUILDER();
         
         float mainAxisSpacing = 0.f;
         float crossAxisSpacing = 0.f;
@@ -221,6 +219,9 @@ namespace ui {
         Axis axis = Axis::Vertical;
         size_t crossAxisCount = 2;
         float childAspectRatio = 1.f;
+
+        LAVENDER_ADD_CHILDREN();
+        LAVENDER_ADD_CHILDREN_BUILDER();
 
         cocos2d::CCNode* construct() const {
             if (crossAxisCount < 1) {

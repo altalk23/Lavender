@@ -104,7 +104,6 @@ namespace ui {
 
     struct LayerColor : public BaseInitializer<LayerColor> {
         LAVENDER_ADD_ID();
-        LAVENDER_ADD_CHILD();
         LAVENDER_ADD_SIZE();
     
         cocos2d::ccColor4B color;
@@ -118,6 +117,8 @@ namespace ui {
 
         std::function<void(cocos2d::enumKeyCodes)> keyDown;
         std::function<void(cocos2d::enumKeyCodes)> keyUp;
+
+        LAVENDER_ADD_CHILD();
 
         cocos2d::CCNode* construct() const {
             auto node = impl::LayerColorWrapper::create(this->color, 0.f, 0.f);

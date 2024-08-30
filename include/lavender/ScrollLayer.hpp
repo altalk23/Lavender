@@ -69,13 +69,14 @@ namespace ui {
 
     struct ScrollLayer : public BaseInitializer<ScrollLayer> {
         LAVENDER_ADD_ID();
-        LAVENDER_ADD_CHILDREN();
-        LAVENDER_ADD_CHILDREN_BUILDER();
 
         Axis axis = Axis::Vertical;
 
         VerticalDirection verticalDirection = VerticalDirection::TopToBottom;
         HorizontalDirection horizontalDirection = HorizontalDirection::LeftToRight;
+
+        LAVENDER_ADD_CHILDREN();
+        LAVENDER_ADD_CHILDREN_BUILDER();
     
         cocos2d::CCNode* construct() const {
             auto node = geode::ScrollLayer::create(ccp(0, 0), true, this->axis == Axis::Vertical);

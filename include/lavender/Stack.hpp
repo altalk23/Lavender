@@ -65,9 +65,10 @@ namespace ui {
 
     struct Stack : BaseInitializer<Stack> {
         LAVENDER_ADD_ID();
-        LAVENDER_ADD_CHILDREN();
         Alignment alignment = Alignment::Center;
         StackFit fit = StackFit::Loose;
+
+        LAVENDER_ADD_CHILDREN();
 
         cocos2d::CCNode* construct() const {
             auto node = cocos2d::CCNode::create();

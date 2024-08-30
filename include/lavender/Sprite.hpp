@@ -8,12 +8,13 @@
 namespace ui {
     struct Sprite : public BaseInitializer<Sprite> {
         LAVENDER_ADD_ID();
-        LAVENDER_ADD_CHILD();
         LAVENDER_ADD_SCALE();
         LAVENDER_ADD_ROTATION();
 
         std::optional<std::string> fileName;
         std::optional<std::string> frameName;
+
+        LAVENDER_ADD_CHILD();
 
         cocos2d::CCNode* construct() const {
             cocos2d::CCSprite* node;

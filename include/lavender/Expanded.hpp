@@ -99,9 +99,10 @@ namespace ui {
 
     struct Expanded : BaseInitializer<Expanded> {
         LAVENDER_ADD_ID();
-        LAVENDER_ADD_CHILD();
 
         size_t flex = 1;
+
+        LAVENDER_ADD_CHILD();
 
         cocos2d::CCNode* construct() const {
             if (this->flex < 1) {

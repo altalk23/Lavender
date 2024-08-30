@@ -272,12 +272,13 @@ namespace ui {
 
     struct Column : public BaseInitializer<Column> {
         LAVENDER_ADD_ID();
-        LAVENDER_ADD_CHILDREN();
-        LAVENDER_ADD_CHILDREN_BUILDER();
 
         MainAxisAlignment mainAxis = MainAxisAlignment::Start;
         CrossAxisAlignment crossAxis = CrossAxisAlignment::Center;
         VerticalDirection direction = VerticalDirection::TopToBottom;
+
+        LAVENDER_ADD_CHILDREN();
+        LAVENDER_ADD_CHILDREN_BUILDER();
 
         cocos2d::CCNode* construct() const {
             auto node = cocos2d::CCNode::create();
@@ -299,12 +300,13 @@ namespace ui {
 
     struct Row : public BaseInitializer<Row> {
         LAVENDER_ADD_ID();
-        LAVENDER_ADD_CHILDREN();
-        LAVENDER_ADD_CHILDREN_BUILDER();
 
         MainAxisAlignment mainAxis = MainAxisAlignment::Start;
         CrossAxisAlignment crossAxis = CrossAxisAlignment::Center;
         HorizontalDirection direction = HorizontalDirection::LeftToRight;
+
+        LAVENDER_ADD_CHILDREN();
+        LAVENDER_ADD_CHILDREN_BUILDER();
 
         cocos2d::CCNode* construct() const {
             auto node = cocos2d::CCNode::create();

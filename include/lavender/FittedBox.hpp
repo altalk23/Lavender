@@ -138,9 +138,11 @@ namespace ui {
 
     struct FittedBox : BaseInitializer<FittedBox> {
         LAVENDER_ADD_ID();
-        LAVENDER_ADD_CHILD();
+        
         BoxFit fit = BoxFit::Contain;
         Alignment alignment = Alignment::Center;
+
+        LAVENDER_ADD_CHILD();
 
         cocos2d::CCNode* construct() const {
             auto node = cocos2d::CCNode::create();

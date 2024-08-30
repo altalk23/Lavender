@@ -100,12 +100,13 @@ namespace ui {
 
     struct Container : BaseInitializer<Container> {
         LAVENDER_ADD_ID();
-        LAVENDER_ADD_CHILD();
         LAVENDER_ADD_SIZE();
 
         EdgeInsets padding;
         bool hidden = false;
         cocos2d::CCAction* action = nullptr;
+
+        LAVENDER_ADD_CHILD();
 
         cocos2d::CCNode* construct() const {
             auto node = cocos2d::CCNode::create();

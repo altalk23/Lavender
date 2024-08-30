@@ -10,9 +10,10 @@
 namespace ui {
     struct Hidden : public BaseInitializer<Hidden> {
         LAVENDER_ADD_ID();
-        LAVENDER_ADD_CHILD();
 
         bool hidden = true;
+
+        LAVENDER_ADD_CHILD();
     
         cocos2d::CCNode* construct() const {
             auto node = cocos2d::CCNode::create();

@@ -55,8 +55,8 @@ namespace ui {
 
     struct RotatedBox : BaseInitializer<RotatedBox> {
         LAVENDER_ADD_ID();
-        LAVENDER_ADD_CHILD();
         int quarterTurns = 0;
+        LAVENDER_ADD_CHILD();
 
         cocos2d::CCNode* construct() const {
             auto node = cocos2d::CCNode::create();
