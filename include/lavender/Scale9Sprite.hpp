@@ -16,8 +16,6 @@ namespace ui {
         std::optional<std::string> fileName;
         std::optional<std::string> frameName;
 
-        LAVENDER_ADD_CHILD();
-
         cocos2d::CCNode* construct() const {
             cocos2d::extension::CCScale9Sprite* node;
             
@@ -32,8 +30,7 @@ namespace ui {
                 return nullptr;
             }
 
-            (void)utils::applyChild(this, node);
-            utils::applySizedConstrainedLayout(this, node);
+            utils::applySizedConstrainedLayout(this, node, false);
 
             utils::applyID(this, node);
             utils::applyScale(this, node);

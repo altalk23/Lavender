@@ -103,7 +103,7 @@ namespace ui {
         std::string text;
         std::string font = "chatFont.fnt";
 
-        cocos2d::ccColor4B color = cocos2d::ccc4(255, 255, 255, 255);
+        Color4B color = cocos2d::ccc4(255, 255, 255, 255);
         TextAlignment alignment = TextAlignment::Left;
         TextWrapping wrapping = TextWrapping::Word;
 

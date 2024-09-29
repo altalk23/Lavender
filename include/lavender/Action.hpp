@@ -18,13 +18,13 @@ namespace ui {
         cocos2d::CCNode* construct() const {
             auto node = cocos2d::CCNode::create();
 
-            (void)utils::applyChild(this, node);
+            auto c = utils::applyChild(this, node);
             utils::applySingleConstrainedLayout(this, node);
 
             utils::applyID(this, node);
 
             if (this->action) {
-                node->runAction(this->action);
+                c->runAction(this->action);
             }
 
             delete this;

@@ -8,9 +8,12 @@ namespace ui {
     namespace impl {
         class SingleConstrainedLayout : public cocos2d::Layout {
         public:
-            static SingleConstrainedLayout* create() {
+            bool m_updatePosition;
+
+            static SingleConstrainedLayout* create(bool updatePosition = true) {
                 auto ret = new (std::nothrow) SingleConstrainedLayout();
                 if (ret) {
+                    ret->m_updatePosition = updatePosition;
                     ret->autorelease();
                     return ret;
                 }
@@ -25,9 +28,11 @@ namespace ui {
 
                     in->setContentSize(child->getContentSize());
 
-                    child->ignoreAnchorPointForPosition(false);
-                    child->setPosition(in->getContentSize() / 2.f);
-                    child->setAnchorPoint(ccp(0.5f, 0.5f));
+                    if (m_updatePosition) {
+                        child->ignoreAnchorPointForPosition(false);
+                        child->setPosition(in->getContentSize() / 2.f);
+                        child->setAnchorPoint(ccp(0.5f, 0.5f));
+                    }
                 }
                 else {
                     in->setContentSize(minSize);
@@ -43,12 +48,14 @@ namespace ui {
         public:
             std::optional<float> m_width;
             std::optional<float> m_height;
+            bool m_hasChild;
 
-            static SizedConstrainedLayout* create(std::optional<float> width, std::optional<float> height) {
+            static SizedConstrainedLayout* create(std::optional<float> width, std::optional<float> height, bool hasChild = true) {
                 auto ret = new (std::nothrow) SizedConstrainedLayout();
                 if (ret) {
                     ret->m_width = width;
                     ret->m_height = height;
+                    ret->m_hasChild = hasChild;
                     ret->autorelease();
                     return ret;
                 }
@@ -66,7 +73,7 @@ namespace ui {
                     maxSize.height = std::clamp(m_height.value(), minSize.height, maxSize.height);
                 }
 
-                if (auto child = utils::getChild(in)) {
+                if (auto child = utils::getChild(in); m_hasChild && child) {
                     utils::setConstraints(child, minSize, maxSize);
                     child->updateLayout();
 
@@ -88,21 +95,21 @@ namespace ui {
     }
 
     namespace utils {
-        void applySingleConstrainedLayout(auto const* data, cocos2d::CCNode* node) {
+        void applySingleConstrainedLayout(auto const* data, cocos2d::CCNode* node, bool updatePosition = true) {
             node->setLayout(
-                impl::SingleConstrainedLayout::create()
+                impl::SingleConstrainedLayout::create(updatePosition)
             );
         }
 
-        void applySizedConstrainedLayout(auto const* data, cocos2d::CCNode* node) {
+        void applySizedConstrainedLayout(auto const* data, cocos2d::CCNode* node, bool hasChild = true) {
             if (data->size.has_value()) {
                 node->setLayout(
-                    impl::SizedConstrainedLayout::create(data->size->width, data->size->height)
+                    impl::SizedConstrainedLayout::create(data->size->width, data->size->height, hasChild)
                 );
             }
             else {
                 node->setLayout(
-                    impl::SizedConstrainedLayout::create(data->width, data->height)
+                    impl::SizedConstrainedLayout::create(data->width, data->height, hasChild)
                 );
             }
         }

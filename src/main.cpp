@@ -29,13 +29,37 @@ class $modify(MyMenuLayer, MenuLayer) {
 		return true;
 	}
 
+	
+	void Myfunction() {
+		auto gen2 = new ui::Popup {
+			.id = "my-popup"_spr,
+			.size = cocos2d::CCSize { 360, 240 },
+			.child = new ui::Center {
+				.child = new ui::Menu {
+					.id = "my-popup-menu"_spr,
+					.child = new ui::MenuItemSpriteExtra {
+						.id = "my-popup-button"_spr,
+						.callback = [this](auto* self) {
+							this->Myfunction();
+						},
+						.child = new ui::Sprite {
+							.frameName = "GJ_likeBtn_001.png",
+						},
+					},
+				},
+			},
+		};
+
+		auto node2 = gen2->get();
+	}
+
 	void onMyButton(CCObject*) {
 		auto gen = new ui::Scene {
 			.id = "my-scene"_spr,
 			.child = new ui::LayerColor {
 				.id = "my-layer"_spr,
 				.color = ccc4(8, 85, 71, 255),
-				.keyBackClicked = [](){
+				.keyBackClicked = [](auto* self){
 					log::debug("Back button clicked!");
 					CCDirector::sharedDirector()->replaceScene(MenuLayer::scene(false));
 				},
@@ -87,6 +111,9 @@ class $modify(MyMenuLayer, MenuLayer) {
 
 		auto node = gen->get();
 
-		CCDirector::sharedDirector()->replaceScene(static_cast<cocos2d::CCScene*>(node));
+		// CCDirector::sharedDirector()->replaceScene(static_cast<cocos2d::CCScene*>(node));
+
+		this->Myfunction();
+
 	}
 };

@@ -1,5 +1,5 @@
 {
-	"geode": "3.4.0",
+	"geode": "3.7.2",
 	"gd": {
 		"win": "2.206",
 		"android": "2.206",
@@ -10,5 +10,10 @@
 	"name": "Lavender UI Kit",
 	"version": "v1.0.0",
 	"developer": "alk",
-	"description": ""
+	"description": "",
+	"api": {
+		"include": [
+			"include/lavender/*.hpp"
+		]
+	}
 }

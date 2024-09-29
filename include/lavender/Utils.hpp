@@ -8,7 +8,7 @@ namespace ui::utils {
         std::optional<std::string> id; \
         cocos2d::CCNode** store = nullptr
     
-    void applyID(auto const* data, cocos2d::CCNode* node) {
+    inline void applyID(auto const* data, cocos2d::CCNode* node) {
         if (data->id.has_value()) {
             node->setID(data->id.value().c_str());
         }
@@ -20,8 +20,9 @@ namespace ui::utils {
     #define LAVENDER_ADD_CHILDREN() \
         std::vector<Base*> children
 
-    bool applyChildren(auto const* data, cocos2d::CCNode* node) {
+    inline bool applyChildren(auto const* data, cocos2d::CCNode* node) {
         for (auto child : data->children) {
+            if (child == nullptr) continue;
             auto childNode = child->construct();
             node->addChild(childNode);
         }
@@ -33,7 +34,7 @@ namespace ui::utils {
         std::function<Base*(size_t)> builder
         
 
-    bool applyChildrenBuilder(auto const* data, cocos2d::CCNode* node) {
+    inline bool applyChildrenBuilder(auto const* data, cocos2d::CCNode* node) {
         if (data->builder) {
             for (size_t i = 0; i < data->count; i++) {
                 auto child = data->builder(i);
@@ -48,7 +49,7 @@ namespace ui::utils {
     #define LAVENDER_ADD_CHILD() \
         Base* child
 
-    cocos2d::CCNode* applyChild(auto const* data, cocos2d::CCNode* node) {
+    inline cocos2d::CCNode* applyChild(auto const* data, cocos2d::CCNode* node) {
         if (data->child != nullptr) {
             auto childNode = data->child->construct();
             node->addChild(childNode);
@@ -62,7 +63,7 @@ namespace ui::utils {
         std::optional<float> width; \
         std::optional<float> height
 
-    void applySize(auto const* data, cocos2d::CCNode* node) {
+    inline void applySize(auto const* data, cocos2d::CCNode* node) {
         if (data->width.has_value()) {
             node->setContentWidth(data->width.value());
         }
@@ -79,7 +80,7 @@ namespace ui::utils {
         std::optional<float> scaleY; \
         std::optional<float> scale
 
-    void applyScale(auto const* data, cocos2d::CCNode* node) {
+    inline void applyScale(auto const* data, cocos2d::CCNode* node) {
         if (data->scaleX.has_value()) {
             node->setScaleX(data->scaleX.value());
         }
@@ -94,13 +95,13 @@ namespace ui::utils {
     #define LAVENDER_ADD_ROTATION() \
         std::optional<float> rotation
 
-    void applyRotation(auto const* data, cocos2d::CCNode* node) {
+    inline void applyRotation(auto const* data, cocos2d::CCNode* node) {
         if (data->rotation.has_value()) {
             node->setRotation(data->rotation.value());
         }
     }
 
-    cocos2d::CCNode* generateWrapper(cocos2d::CCNode* node) {
+    inline cocos2d::CCNode* generateWrapper(cocos2d::CCNode* node) {
         auto wrapper = cocos2d::CCNode::create();
         wrapper->addChild(node);
         wrapper->setContentSize(node->boundingBox().size);
@@ -113,15 +114,18 @@ namespace ui::utils {
     }
 
     #define LAVENDER_ADD_COLOR() \
-        std::optional<cocos2d::ccColor3B> color
+        std::optional<Color3B> color
 
-    void applyColor(auto const* data, cocos2d::CCNodeRGBA* node) {
+    #define LAVENDER_ADD_COLOR4() \
+        std::optional<Color4B> color
+
+    inline void applyColor(auto const* data, cocos2d::CCNodeRGBA* node) {
         if (data->color.has_value()) {
             node->setColor(data->color.value());
         }
     }
 
-    std::pair<cocos2d::CCSize, cocos2d::CCSize> getConstraints(cocos2d::CCNode* node) {
+    inline std::pair<cocos2d::CCSize, cocos2d::CCSize> getConstraints(cocos2d::CCNode* node) {
         auto const constrain = geode::cast::typeinfo_cast<impl::ConstrainedObject*>(node->getUserObject("constrain"_spr));
         if (constrain && constrain->getABIVersion() >= 1) {
             return { constrain->getMinSize(), constrain->getMaxSize() };
@@ -129,12 +133,12 @@ namespace ui::utils {
         return { cocos2d::CCSize{ 0.f, 0.f }, cocos2d::CCSize{ FLT_MAX, FLT_MAX } };
     }
 
-    void setConstraints(cocos2d::CCNode* child, cocos2d::CCSize minSize, cocos2d::CCSize maxSize) {
+    inline void setConstraints(cocos2d::CCNode* child, cocos2d::CCSize minSize, cocos2d::CCSize maxSize) {
         auto constrain = impl::ConstrainedObject::create(minSize, maxSize);
         child->setUserObject("constrain"_spr, constrain);
     }
 
-    cocos2d::CCNode* getChild(cocos2d::CCNode* node) {
+    inline cocos2d::CCNode* getChild(cocos2d::CCNode* node) {
         auto children = node->getChildren();
         if (!children || children->count() != 1) return nullptr;
         return static_cast<cocos2d::CCNode*>(children->objectAtIndex(0));
@@ -226,5 +230,40 @@ namespace ui {
         Left,
         Center,
         Right,
+    };
+
+    struct Color3B {
+        uint8_t r = 0;
+        uint8_t g = 0;
+        uint8_t b = 0;
+
+        Color3B() = default;
+        Color3B(cocos2d::ccColor3B color) : r(color.r), g(color.g), b(color.b) {}
+        Color3B(uint8_t r, uint8_t g, uint8_t b) : r(r), g(g), b(b) {}
+
+        operator cocos2d::ccColor3B() const {
+            return { r, g, b };
+        }
+    };
+
+    struct Color4B {
+        uint8_t r = 0;
+        uint8_t g = 0;
+        uint8_t b = 0;
+        uint8_t a = 255;
+
+        Color4B() = default;
+        Color4B(cocos2d::ccColor3B color) : r(color.r), g(color.g), b(color.b) {}
+        Color4B(cocos2d::ccColor4B color) : r(color.r), g(color.g), b(color.b), a(color.a) {}
+        Color4B(uint8_t r, uint8_t g, uint8_t b) : r(r), g(g), b(b) {}
+        Color4B(uint8_t r, uint8_t g, uint8_t b, uint8_t a) : r(r), g(g), b(b), a(a) {}
+
+        operator cocos2d::ccColor3B() const {
+            return { r, g, b };
+        }
+
+        operator cocos2d::ccColor4B() const {
+            return { r, g, b, a };
+        }
     };
 }
