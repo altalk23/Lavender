@@ -10,13 +10,16 @@ namespace ui {
         class PositionedLayout : public geode::Layout {
         public:
             std::optional<cocos2d::CCPoint> m_offset;
+            std::optional<cocos2d::CCPoint> m_anchor;
 
             static PositionedLayout* create(
-                std::optional<cocos2d::CCPoint> offset
+                std::optional<cocos2d::CCPoint> offset,
+                std::optional<cocos2d::CCPoint> anchor
             ) {
                 auto ret = new (std::nothrow) PositionedLayout();
                 if (ret) {
                     ret->m_offset = offset;
+                    ret->m_anchor = anchor;
                     ret->autorelease();
                     return ret;
                 }
@@ -35,10 +38,10 @@ namespace ui {
                     utils::setConstraints(child, minSize, maxSize);
                     child->updateLayout();
 
-                    in->setContentSize(child->getContentSize());
+                    in->setContentSize(maxSize);
 
                     child->ignoreAnchorPointForPosition(false);
-                    child->setPosition(in->getContentSize() / 2.f + m_offset.value_or(ccp(0, 0)));
+                    child->setPosition(in->getContentSize() * m_anchor.value_or(ccp(0, 0)) + m_offset.value_or(ccp(0, 0)));
                     child->setAnchorPoint(ccp(0.5f, 0.5f));
                 }
                 else {
@@ -57,6 +60,7 @@ namespace ui {
         LAVENDER_ADD_CHILD();
 
         std::optional<cocos2d::CCPoint> offset;
+        std::optional<cocos2d::CCPoint> anchor;
 
         cocos2d::CCNode* construct() const {
             auto node = cocos2d::CCNode::create();
@@ -64,7 +68,7 @@ namespace ui {
             utils::applyChild(this, node);
 
             node->setLayout(
-                impl::PositionedLayout::create(this->offset)
+                impl::PositionedLayout::create(this->offset, this->anchor)
             );
 
             delete this;
