@@ -24,3 +24,5 @@
 #include "Transform.hpp"
 #include "ScrollLayer.hpp"
 #include "Popup.hpp"
+#include "MenuItemToggler.hpp"
+#include "Positioned.hpp"

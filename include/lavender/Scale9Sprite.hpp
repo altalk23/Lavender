@@ -12,6 +12,7 @@ namespace ui {
         LAVENDER_ADD_SCALE();
         LAVENDER_ADD_SIZE();
         LAVENDER_ADD_COLOR4();
+        LAVENDER_ADD_CHILD();
 
         std::optional<std::string> fileName;
         std::optional<std::string> frameName;
@@ -43,8 +44,12 @@ namespace ui {
             }
             utils::applyColor4(this, node);
 
+            utils::applySizedConstrainedLayout(this, node, false);
+
             auto wrapper = utils::generateWrapper(node);
-            utils::applySizedConstrainedLayout(this, wrapper);
+            auto child = utils::applyChild(this, wrapper);
+
+            utils::applyPrimarySizedConstrainedLayout(this, wrapper, child);
 
             delete this;
             return wrapper;

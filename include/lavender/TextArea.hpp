@@ -158,8 +158,11 @@ namespace ui {
                 node->setLinePadding(this->linePadding.value());
             }
 
+            auto wrapper = utils::generateWrapper(node);
+            utils::applySingleConstrainedLayout(this, wrapper);
+
             delete this;
-            return node;
+            return wrapper;
         }
     };
 }

@@ -41,6 +41,7 @@ namespace ui {
             }
 
             void apply(cocos2d::CCNode* in) override {
+                // minSize = 0, 0 maxSize = 200, FLT_MAX
                 auto [minSize, maxSize] = utils::getConstraints(in);
                 auto const minSideSmall = std::min(minSize.width, minSize.height);
                 auto const minSideLarge = std::max(minSize.width, minSize.height);
@@ -49,80 +50,128 @@ namespace ui {
                 if (auto child = utils::getChild(in)) {
                     switch (m_fit) {
                         case BoxFit::Fill: {
-                            utils::setConstraints(child, maxSize, maxSize);
+                            utils::setConstraints(child, {0.f, 0.f}, {FLT_MAX, FLT_MAX});
                             child->updateLayout();
 
                             auto const childSize = child->getContentSize();
-                            auto const scaleX = maxSize.width / childSize.width;
-                            auto const scaleY = maxSize.height / childSize.height;
+                            auto const widthScale = maxSize.width / childSize.width;
+                            auto const heightScale = maxSize.height / childSize.height;
+                            auto const scaleX = maxSize.width == FLT_MAX ? heightScale : widthScale;
+                            auto const scaleY = maxSize.height == FLT_MAX ? widthScale : heightScale;
 
                             child->setScaleX(scaleX);
                             child->setScaleY(scaleY);
 
+                            in->setContentSize(childSize * ccp(scaleX, scaleY));
                             break;
                         }
                         case BoxFit::Contain: {
-                            utils::setConstraints(child, ccp(minSideLarge, minSideLarge), ccp(maxSideSmall, maxSideSmall));
+                            utils::setConstraints(child, {0.f, 0.f}, {FLT_MAX, FLT_MAX});
                             child->updateLayout();
 
                             auto const childSize = child->getContentSize();
-                            auto const scale = std::min(maxSize.width / childSize.width, maxSize.height / childSize.height);
+                            auto const widthScale = maxSize.width / childSize.width;
+                            auto const heightScale = maxSize.height / childSize.height;
+                            auto const scale = std::min(
+                                maxSize.width == FLT_MAX ? heightScale : widthScale, 
+                                maxSize.height == FLT_MAX ? widthScale : heightScale
+                            );
 
                             child->setScale(scale);
 
+                            in->setContentSize(childSize * scale);
                             break;
                         }
                         case BoxFit::Cover: {
-                            utils::setConstraints(child, ccp(minSideSmall, minSideSmall), ccp(maxSideLarge, maxSideLarge));
+                            utils::setConstraints(child, {0.f, 0.f}, {FLT_MAX, FLT_MAX});
                             child->updateLayout();
 
                             auto const childSize = child->getContentSize();
-                            auto const scale = std::max(maxSize.width / childSize.width, maxSize.height / childSize.height);
+                            auto const widthScale = maxSize.width / childSize.width;
+                            auto const heightScale = maxSize.height / childSize.height;
+                            auto const scale = std::max(
+                                maxSize.width == FLT_MAX ? heightScale : widthScale, 
+                                maxSize.height == FLT_MAX ? widthScale : heightScale
+                            );
 
                             child->setScale(scale);
+
+                            auto scaledSize = childSize * scale;
+                            scaledSize.width = std::min(scaledSize.width, maxSize.width);
+                            scaledSize.height = std::min(scaledSize.height, maxSize.height);
+                            in->setContentSize(scaledSize);
                             break;
                         }
                         case BoxFit::FitWidth: {
-                            utils::setConstraints(child, ccp(minSize.width, minSize.width), ccp(maxSize.width, maxSize.width));
+                            utils::setConstraints(child, {0.f, 0.f}, {FLT_MAX, FLT_MAX});
                             child->updateLayout();
 
                             auto const childSize = child->getContentSize();
-                            auto const scale = maxSize.width / childSize.width;
+                            auto const widthScale = maxSize.width / childSize.width;
+                            auto const heightScale = maxSize.height / childSize.height;
+                            auto const scale = maxSize.width == FLT_MAX ? heightScale : widthScale;
 
                             child->setScale(scale);
+
+                            in->setContentSize(childSize * scale);
+                            break;
                         }
                         case BoxFit::FitHeight: {
-                            utils::setConstraints(child, ccp(minSize.height, minSize.height), ccp(maxSize.height, maxSize.height));
+                            utils::setConstraints(child, {0.f, 0.f}, {FLT_MAX, FLT_MAX});
                             child->updateLayout();
 
                             auto const childSize = child->getContentSize();
-                            auto const scale = maxSize.height / childSize.height;
+                            auto const widthScale = maxSize.width / childSize.width;
+                            auto const heightScale = maxSize.height / childSize.height;
+                            auto const scale = maxSize.height == FLT_MAX ? widthScale : heightScale;
 
                             child->setScale(scale);
-                        }
-                        case BoxFit::None:
-                            utils::setConstraints(child, minSize, maxSize);
-                            child->updateLayout();
+
+                            in->setContentSize(childSize * scale);
                             break;
-                        case BoxFit::ScaleDown: {
-                            utils::setConstraints(child, minSize, maxSize);
+                        }
+                        case BoxFit::None: {
+                            utils::setConstraints(child, {0.f, 0.f}, {FLT_MAX, FLT_MAX});
                             child->updateLayout();
 
                             auto const childSize = child->getContentSize();
-                            auto const scale = std::min(maxSize.width / childSize.width, maxSize.height / childSize.height);
+                            auto const widthScale = maxSize.width / childSize.width;
+                            auto const heightScale = maxSize.height / childSize.height;
+                            auto const scale = std::min(
+                                maxSize.width == FLT_MAX ? heightScale : widthScale, 
+                                maxSize.height == FLT_MAX ? widthScale : heightScale
+                            );
+
+                            in->setContentSize(childSize * scale);
+                            break;
+                        }
+                        case BoxFit::ScaleDown: {
+                            utils::setConstraints(child, {0.f, 0.f}, {FLT_MAX, FLT_MAX});
+                            child->updateLayout();
+
+                            auto const childSize = child->getContentSize();
+                            auto const widthScale = maxSize.width / childSize.width;
+                            auto const heightScale = maxSize.height / childSize.height;
+                            auto const scale = std::min(
+                                maxSize.width == FLT_MAX ? heightScale : widthScale, 
+                                maxSize.height == FLT_MAX ? widthScale : heightScale
+                            );
+
                             if (scale < 1.f) {
                                 child->setScale(scale);
+                                in->setContentSize(childSize * scale);
+                            }
+                            else {
+                                in->setContentSize(childSize);
                             }
                             break;
                         }
                     }
 
-                    in->setContentSize(maxSize);
-
                     auto const childSize = child->getContentSize() * child->getScale();
-                    auto const stepSize = (maxSize - childSize) / 2.f; // single step to change alignment by 1
+                    auto const stepSize = (in->getContentSize() - childSize) / 2.f; // single step to change alignment by 1
 
-                    auto const center = maxSize / 2.f;
+                    auto const center = in->getContentSize() / 2.f;
                     auto const offset = cocos2d::CCSize(
                         m_alignment.x * stepSize.width,
                         m_alignment.y * stepSize.height

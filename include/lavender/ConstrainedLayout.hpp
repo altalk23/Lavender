@@ -22,16 +22,18 @@ namespace ui {
 
             void apply(cocos2d::CCNode* in) override {
                 auto const [minSize, maxSize] = utils::getConstraints(in);
-                if (auto child = utils::getChild(in)) {
-                    utils::setConstraints(child, minSize, maxSize);
-                    child->updateLayout();
+                if (in->getChildrenCount() > 0) {
+                    for (auto child : geode::cocos::CCArrayExt<cocos2d::CCNode*>(in->getChildren())) {
+                        utils::setConstraints(child, minSize, maxSize);
+                        child->updateLayout();
 
-                    in->setContentSize(child->getContentSize());
+                        in->setContentSize(child->getContentSize());
 
-                    if (m_updatePosition) {
-                        child->ignoreAnchorPointForPosition(false);
-                        child->setPosition(in->getContentSize() / 2.f);
-                        child->setAnchorPoint(ccp(0.5f, 0.5f));
+                        if (m_updatePosition) {
+                            child->ignoreAnchorPointForPosition(false);
+                            child->setPosition(in->getContentSize() / 2.f);
+                            child->setAnchorPoint(ccp(0.5f, 0.5f));
+                        }
                     }
                 }
                 else {
@@ -127,6 +129,69 @@ namespace ui {
                 return in->getContentSize();
             }
         };
+
+        class PrimarySizedConstrainedLayout : public geode::Layout {
+        public:
+            std::optional<float> m_width;
+            std::optional<float> m_height;
+            cocos2d::CCNode* m_primaryChild;
+
+            static PrimarySizedConstrainedLayout* create(std::optional<float> width, std::optional<float> height, cocos2d::CCNode* primaryChild) {
+                auto ret = new (std::nothrow) PrimarySizedConstrainedLayout();
+                if (ret) {
+                    ret->m_width = width;
+                    ret->m_height = height;
+                    ret->m_primaryChild = primaryChild; 
+                    ret->autorelease();
+                    return ret;
+                }
+                return nullptr;
+            }
+
+            void apply(cocos2d::CCNode* in) override {
+                auto [minSize, maxSize] = utils::getConstraints(in);
+                if (m_width.has_value()) {
+                    minSize.width = std::clamp(m_width.value(), minSize.width, maxSize.width);
+                    maxSize.width = std::clamp(m_width.value(), minSize.width, maxSize.width);
+                }
+                if (m_height.has_value()) {
+                    minSize.height = std::clamp(m_height.value(), minSize.height, maxSize.height);
+                    maxSize.height = std::clamp(m_height.value(), minSize.height, maxSize.height);
+                }
+
+                if (m_primaryChild) {
+                    utils::setConstraints(m_primaryChild, minSize, maxSize);
+                    m_primaryChild->updateLayout();
+
+                    auto primarySize = m_primaryChild->getContentSize();
+                    in->setContentSize(primarySize);
+
+                    m_primaryChild->ignoreAnchorPointForPosition(false);
+                    m_primaryChild->setPosition(in->getContentSize() / 2.f);
+                    m_primaryChild->setAnchorPoint(ccp(0.5f, 0.5f));
+
+                    for (auto child : geode::cocos::CCArrayExt<cocos2d::CCNode*>(in->getChildren())) {
+                        if (child != m_primaryChild) {
+                            auto scale = ccp(std::fabs(child->getScaleX()), std::fabs(child->getScaleY()));
+                            auto inverseScale = ccp(1.f / scale.x, 1.f / scale.y);
+                            utils::setConstraints(child, primarySize * inverseScale, primarySize * inverseScale);
+                            child->updateLayout();
+
+                            child->ignoreAnchorPointForPosition(false);
+                            child->setPosition(in->getContentSize() / 2.f);
+                            child->setAnchorPoint(ccp(0.5f, 0.5f));
+                        }
+                    }
+                }
+                else {
+                    in->setContentSize(maxSize);
+                }
+            }
+
+            cocos2d::CCSize getSizeHint(cocos2d::CCNode* in) const override {
+                return in->getContentSize();
+            }
+        };
     }
 
     namespace utils {
@@ -151,6 +216,19 @@ namespace ui {
             else {
                 node->setLayout(
                     impl::SizedConstrainedLayout::create(data->width, data->height, hasChild)
+                );
+            }
+        }
+
+        void applyPrimarySizedConstrainedLayout(auto const* data, cocos2d::CCNode* node, cocos2d::CCNode* primaryChild) {
+            if (data->size.has_value()) {
+                node->setLayout(
+                    impl::PrimarySizedConstrainedLayout::create(data->size->width, data->size->height, primaryChild)
+                );
+            }
+            else {
+                node->setLayout(
+                    impl::PrimarySizedConstrainedLayout::create(data->width, data->height, primaryChild)
                 );
             }
         }
