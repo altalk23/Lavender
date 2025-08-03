@@ -132,6 +132,15 @@ namespace ui::utils {
         }
     }
 
+    #define LAVENDER_ADD_CONTROLLER() \
+        std::optional<Controller> controller
+    
+    inline void applyController(auto const* data, cocos2d::CCNode* node) {
+        if (data->controller.has_value()) {
+            data->controller.value().set(node);
+        }
+    }
+
     inline std::pair<cocos2d::CCSize, cocos2d::CCSize> getConstraints(cocos2d::CCNode* node) {
         auto const constrain = geode::cast::typeinfo_cast<impl::ConstrainedObject*>(node->getUserObject("constrain"_spr));
         if (constrain && constrain->getABIVersion() >= 1) {
@@ -271,6 +280,86 @@ namespace ui {
 
         operator cocos2d::ccColor4B() const {
             return { r, g, b, a };
+        }
+    };
+
+    struct Controller {
+    private:
+        struct Impl {
+            mutable cocos2d::CCNode* m_node = nullptr;
+
+            cocos2d::CCNode* get() const {
+                return m_node;
+            }
+            void set(cocos2d::CCNode* node) const {
+                m_node = node;
+            }
+        };
+
+        std::shared_ptr<Impl> m_impl = nullptr;
+    public:
+
+        Controller() : m_impl(std::make_shared<Impl>()) {}
+        Controller(Controller const&) = default;
+        Controller(Controller&&) = default;
+        Controller& operator=(Controller const&) = default;
+        Controller& operator=(Controller&&) = default;
+        ~Controller() = default;
+
+        cocos2d::CCNode* get() const {
+            return m_impl->get();
+        }
+        void set(cocos2d::CCNode* node) const {
+            m_impl->set(node);
+        }
+        operator cocos2d::CCNode*() const {
+            return this->get();
+        }
+
+        cocos2d::CCNode* operator->() const {
+            return this->get();
+        }
+        operator bool() const {
+            return this->get() != nullptr;
+        }
+    };
+
+    template <class T>
+    struct TypedController {
+    private:
+        Controller controller;
+
+    public:
+
+        TypedController() = default;
+        TypedController(TypedController const&) = default;
+        TypedController(TypedController&&) = default;
+        TypedController& operator=(TypedController const&) = default;
+        TypedController& operator=(TypedController&&) = default;
+        ~TypedController() = default;
+
+        T* get() const {
+            return static_cast<T*>(controller.get());
+        }
+
+        void set(T* node) {
+            controller.set(node);
+        }
+        operator T*() const {
+            return this->get();
+        }
+        operator Controller() const {
+            return controller;
+        }
+        operator cocos2d::CCNode*() const {
+            return this->get();
+        }
+
+        T* operator->() const {
+            return this->get();
+        }
+        operator bool() const {
+            return this->get() != nullptr;
         }
     };
 }

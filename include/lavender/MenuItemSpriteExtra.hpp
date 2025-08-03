@@ -9,6 +9,7 @@
 namespace ui {
     struct MenuItemSpriteExtra : public BaseInitializer<MenuItemSpriteExtra> {
         LAVENDER_ADD_ID();
+        LAVENDER_ADD_CONTROLLER();
 
         std::function<void(cocos2d::CCObject*)> callback = +[](cocos2d::CCObject*) {};
 
@@ -24,6 +25,7 @@ namespace ui {
             auto node = geode::cocos::CCMenuItemExt::createSpriteExtra(normal, callback);
 
             utils::applyID(this, node);
+            utils::applyController(this, node);
             utils::applySingleConstrainedLayout(this, node);
 
             delete this;

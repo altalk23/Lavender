@@ -99,6 +99,7 @@ namespace ui {
 
     struct TextArea : BaseInitializer<TextArea> {
         LAVENDER_ADD_ID();
+        LAVENDER_ADD_CONTROLLER();
 
         std::string text;
         std::string font = "chatFont.fnt";
@@ -115,6 +116,7 @@ namespace ui {
             auto node = geode::SimpleTextArea::create(this->text, this->font);
 
             utils::applyID(this, node);
+            utils::applyController(this, node);
 
             node->setLayout(impl::TextAreaLayout::create());
 

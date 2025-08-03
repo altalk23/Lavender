@@ -38,6 +38,7 @@ namespace ui {
 
     struct TextInput : BaseInitializer<TextInput> {
         LAVENDER_ADD_ID();
+        LAVENDER_ADD_CONTROLLER();
 
         std::string placeholder;
         std::string font = "bigFont.fnt";
@@ -66,6 +67,7 @@ namespace ui {
             auto node = geode::TextInput::create(100, this->placeholder, this->font);
 
             utils::applyID(this, node);
+            utils::applyController(this, node);
             node->setLayout(impl::TextInputLayout::create());
 
             if (this->label.has_value()) {

@@ -150,6 +150,7 @@ namespace ui {
     struct LayerColor : public BaseInitializer<LayerColor> {
         LAVENDER_ADD_ID();
         LAVENDER_ADD_SIZE();
+        LAVENDER_ADD_CONTROLLER();
         Color4B color = cocos2d::ccc4(0, 0, 0, 255);
 
         std::function<void(cocos2d::CCLayerColor*)> keyBackClicked;
@@ -178,6 +179,7 @@ namespace ui {
 
             utils::applyID(this, node);
             utils::applySize(this, node);
+            utils::applyController(this, node);
 
             if (this->keyBackClicked) {
                 node->keyBackClickedFunction = this->keyBackClicked;

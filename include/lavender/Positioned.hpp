@@ -29,19 +29,15 @@ namespace ui {
         
             void apply(cocos2d::CCNode* in) override {
                 auto [minSize, maxSize] = utils::getConstraints(in);
-                if (m_offset.has_value()) {
-                    minSize -= m_offset.value();
-                    maxSize -= m_offset.value();
-                }
 
                 if (auto child = utils::getChild(in); child) {
-                    utils::setConstraints(child, minSize, maxSize);
+                    utils::setConstraints(child, cocos2d::CCSize{0, 0}, maxSize);
                     child->updateLayout();
 
                     in->setContentSize(maxSize);
 
                     child->ignoreAnchorPointForPosition(false);
-                    child->setPosition(in->getContentSize() * m_anchor.value_or(ccp(0, 0)) + m_offset.value_or(ccp(0, 0)));
+                    child->setPosition(maxSize * m_anchor.value_or(ccp(0, 0)) + m_offset.value_or(ccp(0, 0)));
                     child->setAnchorPoint(ccp(0.5f, 0.5f));
                 }
                 else {

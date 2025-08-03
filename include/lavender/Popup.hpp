@@ -22,6 +22,7 @@ namespace ui {
         LAVENDER_ADD_ID();
         LAVENDER_ADD_SIZE();
         LAVENDER_ADD_CHILD();
+        LAVENDER_ADD_CONTROLLER();
         Base* outer = nullptr;
 
         PopupAnimation animation = PopupAnimation::Scale;
@@ -50,13 +51,49 @@ namespace ui {
                     break;
             };
 
-            cocos2d::CCNode* root = nullptr;
-            cocos2d::CCNode* stack = nullptr;
             cocos2d::CCNode* outerStack = nullptr;
+            Controller rootController;
+
+            std::vector<Base*> children;
+            if (this->bgFrameName.has_value() || this->bgFileName.has_value()) {
+                children.push_back(new Scale9Sprite {
+                    .id = this->bgId,
+                    .fileName = this->bgFileName,
+                    .frameName = this->bgFrameName,
+                    .size = this->size,
+                });
+            }
+            children.push_back(new Container {
+                .size = this->size,
+                .child = new Stack {
+                    .children = {
+                        this->child,
+                        new Menu {
+                            .child = new Align {
+                                .alignment = Alignment::TopLeft,
+                                .child = new Transform {
+                                    .offset = ccp(3.f, -3.f),
+                                    .anchor = ccp(1.f, 0.f),
+                                    .child = new MenuItemSpriteExtra {
+                                        .callback = [=](auto* self) {
+                                            rootController->removeFromParentAndCleanup(true);
+                                        },
+                                        .child = new Sprite {
+                                            .id = this->closeId,
+                                            .fileName = this->closeFileName,
+                                            .frameName = this->closeFileName.has_value() ? std::nullopt : this->closeFrameName,
+                                            .scale = 0.8f,
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+            });
 
             auto gen = new LayerColor {
                 .id = this->id,
-                .store = &root,
                 .color = cocos2d::ccc4(0, 0, 0, 1),
                 .keyBackClicked = [](auto* self) {
                     self->removeFromParentAndCleanup(true);
@@ -76,54 +113,18 @@ namespace ui {
                 .child = new Align {
                     .child = new Stack {
                         .store = &outerStack,
-                        .children = {
-                            new Scale9Sprite {
-                                .id = this->bgId,
-                                .fileName = this->bgFrameName.has_value() ? std::nullopt : this->bgFileName,
-                                .frameName = this->bgFrameName,
-                                .size = this->size,
-                            },
-                            new Container {
-                                .size = this->size,
-                                .child = new Stack {
-                                    .store = &stack,
-                                },
-                            },
-                            this->outer,
-                        },
+                        .children = children,
                     },
                 },
             };
             auto node = gen->construct();
+            rootController.set(node);
+            utils::applyController(this, node);
+            
             node->runAction(cocos2d::CCFadeTo::create(0.14f, 105));
 
             outerStack->setScale(tscale);
             outerStack->runAction(action);
-
-            auto menuGen = new Menu {
-                .child = new Align {
-                    .alignment = Alignment::TopLeft,
-                    .child = new Transform {
-                        .offset = ccp(3.f, -3.f),
-                        .anchor = ccp(1.f, 0.f),
-                        .child = new MenuItemSpriteExtra {
-                            .callback = [=](auto* self) {
-                                root->removeFromParentAndCleanup(true);
-                            },
-                            .child = new Sprite {
-                                .id = this->closeId,
-                                .fileName = this->closeFileName,
-                                .frameName = this->closeFileName.has_value() ? std::nullopt : this->closeFrameName,
-                                .scale = 0.8f,
-                            },
-                        },
-                    },
-                },
-            };
-            stack->addChild(menuGen->construct());
-            if (this->child) {
-                stack->addChild(this->child->construct());
-            }
 
             auto winSize = cocos2d::CCDirector::sharedDirector()->getWinSize();
             node->setUserObject("constrain"_spr, impl::ConstrainedObject::create(ccp(0, 0), winSize));
