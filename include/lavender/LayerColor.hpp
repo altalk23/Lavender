@@ -13,8 +13,8 @@ namespace ui {
             std::function<void(cocos2d::CCLayerColor*, cocos2d::CCTouch*, cocos2d::CCEvent*)> onTouchMovedFunction;
             std::function<void(cocos2d::CCLayerColor*, cocos2d::CCTouch*, cocos2d::CCEvent*)> onTouchEndedFunction;
             std::function<void(cocos2d::CCLayerColor*, cocos2d::CCTouch*, cocos2d::CCEvent*)> onTouchCancelledFunction;
-            std::function<void(cocos2d::CCLayerColor*, cocos2d::enumKeyCodes)> keyDownFunction;
-            std::function<void(cocos2d::CCLayerColor*, cocos2d::enumKeyCodes)> keyUpFunction;
+            std::function<void(cocos2d::CCLayerColor*, cocos2d::enumKeyCodes, double)> keyDownFunction;
+            std::function<void(cocos2d::CCLayerColor*, cocos2d::enumKeyCodes, double)> keyUpFunction;
             std::function<void(cocos2d::CCLayerColor*)> onEnterFunction;
             std::function<void(cocos2d::CCLayerColor*)> onExitFunction;
             std::function<void(cocos2d::CCLayerColor*)> registerWithTouchDispatcherFunction;
@@ -127,21 +127,21 @@ namespace ui {
                 }
             }
 
-            void keyDown(cocos2d::enumKeyCodes keyCode) override {
+            void keyDown(cocos2d::enumKeyCodes keyCode, double timestamp) override {
                 if (this->keyDownFunction) {
-                    this->keyDownFunction(this, keyCode);
+                    this->keyDownFunction(this, keyCode, timestamp);
                 }
                 else {
-                    cocos2d::CCLayerColor::keyDown(keyCode);
+                    cocos2d::CCLayerColor::keyDown(keyCode, timestamp);
                 }
             }
 
-            void keyUp(cocos2d::enumKeyCodes keyCode) override {
+            void keyUp(cocos2d::enumKeyCodes keyCode, double timestamp) override {
                 if (this->keyUpFunction) {
-                    this->keyUpFunction(this, keyCode);
+                    this->keyUpFunction(this, keyCode, timestamp);
                 }
                 else {
-                    cocos2d::CCLayerColor::keyUp(keyCode);
+                    cocos2d::CCLayerColor::keyUp(keyCode, timestamp);
                 }
             }
         };
@@ -160,8 +160,8 @@ namespace ui {
         std::function<void(cocos2d::CCLayerColor*, cocos2d::CCTouch*, cocos2d::CCEvent*)> onTouchEnded;
         std::function<void(cocos2d::CCLayerColor*, cocos2d::CCTouch*, cocos2d::CCEvent*)> onTouchCancelled;
 
-        std::function<void(cocos2d::CCLayerColor*, cocos2d::enumKeyCodes)> keyDown;
-        std::function<void(cocos2d::CCLayerColor*, cocos2d::enumKeyCodes)> keyUp;
+        std::function<void(cocos2d::CCLayerColor*, cocos2d::enumKeyCodes, double)> keyDown;
+        std::function<void(cocos2d::CCLayerColor*, cocos2d::enumKeyCodes, double)> keyUp;
 
         std::function<void(cocos2d::CCLayerColor*)> onEnter;
         std::function<void(cocos2d::CCLayerColor*)> onExit;
